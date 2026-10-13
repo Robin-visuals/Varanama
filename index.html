@@ -1,0 +1,591 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VaraNama — Community Fare Guide</title>
+<style>
+:root{--g:#087f5b;--p:#f5faf7;--line:#d8e7df;--ink:#19342a;--muted:#60756b}*{box-sizing:border-box}body{margin:0;background:var(--p);color:var(--ink);font:16px system-ui,Arial}header{background:linear-gradient(120deg,#075e45,#0b8f67);color:white;padding:25px 18px 36px}.wrap,main{max-width:940px;margin:auto;padding:0 16px}h1{margin:0;font-size:clamp(27px,4vw,38px)}header p{max-width:650px;line-height:1.5;color:#e2fff4}.logo{font-size:24px;display:inline-grid;place-items:center;background:#ffffff25;border-radius:12px;width:43px;height:43px;margin-right:10px}main{margin-top:-15px;margin-bottom:36px}.panel{background:white;border:1px solid var(--line);border-radius:17px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #153a2410}h2{font-size:20px;margin:0 0 10px}.sub,.hint,.status,footer{color:var(--muted);font-size:13px;line-height:1.5}.sub{margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{position:relative;min-width:0}label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}input,select{width:100%;padding:12px;border:1px solid #c9d9d0;border-radius:10px;font:inherit;color:var(--ink);background:white}input:focus,select:focus{outline:2px solid #087f5b40;border-color:var(--g)}.hint{margin-top:5px}.suggestions{display:none;position:absolute;top:100%;left:0;right:0;z-index:4;max-height:220px;overflow:auto;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px #1234}.suggestion{display:block;width:100%;padding:10px;text-align:left;border:0;border-bottom:1px solid #edf3ef;background:white;cursor:pointer}.suggestion:hover{background:#e6fcf5}.suggestion strong,.suggestion small{display:block}.suggestion small{color:var(--muted);margin-top:3px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--g);color:white}.secondary{background:#edf5f0;color:#215541;border:1px solid var(--line)}.result{display:none;background:#f0fff8;border:1px solid #b9e9d7;border-radius:13px;padding:15px;margin-top:15px}.route{font-size:18px;font-weight:750}.muted{color:var(--muted);font-size:13px;margin-top:5px}.faregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.fare{background:white;border:1px solid var(--line);padding:12px;border-radius:10px}.fare b,.fare span{display:block}.fare span{color:var(--muted);font-size:13px;margin-top:4px}.notice{background:#fff7e6;border:1px solid #f2d9a4;color:#704b0a;border-radius:10px;padding:12px;font-size:13px;line-height:1.5;margin-top:12px}.list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;background:white}.chip button{border:0;background:none;color:#9b4030;cursor:pointer}.status{margin-top:10px}.inline{display:flex;gap:8px}.inline input{flex:1}footer{text-align:center;padding:0 16px 28px}@media(max-width:620px){.grid,.faregrid{grid-template-columns:1fr}.panel{padding:15px}}
+
+/* Main-page smart autocomplete */
+.place-input-wrap{position:relative;width:100%}
+.place-suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:120;background:var(--card,#fff);border:1px solid var(--line,#d7e1dc);border-radius:12px;box-shadow:0 12px 28px #0c35251f;max-height:280px;overflow:auto;display:none}
+.place-suggestions.open{display:block}
+.place-suggestion{display:flex;gap:10px;align-items:flex-start;width:100%;padding:10px 12px;border:0;border-bottom:1px solid var(--line,#e6ece9);background:transparent;text-align:left;cursor:pointer;color:var(--ink,#18352a);font:inherit}
+.place-suggestion:last-child{border-bottom:0}
+.place-suggestion:hover,.place-suggestion:focus{background:#effaf4;outline:none}
+.place-suggestion-icon{flex:0 0 24px;text-align:center}
+.place-suggestion-main{font-size:14px;font-weight:750;line-height:1.35}
+.place-suggestion-sub{font-size:12px;color:var(--muted,#64756c);line-height:1.4;margin-top:2px}
+.main-location-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.main-location-btn{border:1px solid #b8d8c8;background:#effaf4;color:#145b40;border-radius:9px;padding:8px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.main-location-status{font-size:12px;color:var(--muted,#64756c)}
+
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+.map-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.map-btn{border:1px solid #b8d8c8;background:#effaf4;color:#145b40;border-radius:9px;padding:8px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;margin-top:7px}
+.map-modal{display:none;position:fixed;inset:0;z-index:1000;background:#10291dcc;padding:16px;align-items:center;justify-content:center}
+.map-card{width:min(900px,100%);max-height:95vh;overflow:auto;background:white;border-radius:16px;padding:16px;box-shadow:0 20px 70px #0005}
+.map-card h2{margin:0 0 8px}.map-search{display:flex;gap:8px;margin:12px 0}.map-search input{flex:1;min-width:0}
+#map{height:min(52vh,480px);min-height:300px;border:1px solid var(--line);border-radius:12px;z-index:1}
+.map-results{display:flex;flex-direction:column;gap:6px;margin:8px 0}.map-result{padding:10px;text-align:left;border:1px solid var(--line);border-radius:9px;background:white;cursor:pointer;color:var(--ink)}.map-result:hover{background:#effaf4}
+.map-status{font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0}.map-selected{background:#f0fff8;border:1px solid #b9e9d7;border-radius:9px;padding:10px;font-size:13px;margin:8px 0}
+@media(max-width:620px){.map-card{padding:12px}.map-search{flex-direction:column}#map{min-height:280px}}
+
+.brand-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.brand-actions .secondary{background:#ffffffea;color:#15523d}.connection-status{font-size:12px;color:#dff7eb}.account-modal{display:none;position:fixed;inset:0;z-index:1500;background:#10291dcc;padding:16px;align-items:center;justify-content:center}.account-modal.open{display:flex}.account-card{position:relative;width:min(480px,100%);background:white;border-radius:18px;padding:24px;box-shadow:0 20px 70px #0005}.account-card h2{padding-right:30px}.close-modal{position:absolute;right:14px;top:12px;border:0;background:#edf5f0;border-radius:9px;font-size:24px;width:36px;height:36px;cursor:pointer;color:var(--ink)}.community-head{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}.community-head .sub{max-width:620px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 22px}.stat-card{background:#f3faf6;border:1px solid var(--line);border-radius:12px;padding:13px}.stat-card span,.stat-card strong{display:block}.stat-card span{font-size:12px;color:var(--muted)}.stat-card strong{font-size:20px;margin-top:4px}.leaderboard{display:grid;gap:8px}.leader-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}.leader-left{display:flex;gap:10px;align-items:center}.rank-bubble{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#eaf7f0;font-weight:800}.leader-name{font-weight:750}.leader-meta{font-size:12px;color:var(--muted)}.reward-panel{margin-top:18px;padding:14px;background:#f6fbf8;border:1px solid var(--line);border-radius:12px}.reward-actions{display:flex;gap:8px;flex-wrap:wrap}.moderation-item{align-items:flex-start}.moderation-actions{display:flex;gap:6px;flex-wrap:wrap}.moderation-actions .btn{font-size:12px;padding:7px 9px}.reward-actions .btn{padding:9px 11px;font-size:13px}@media(max-width:620px){.stats-grid{grid-template-columns:1fr}.community-head{display:block}.community-head .btn{margin-bottom:10px}.account-card{padding:18px}}
+</style></head><body>
+<header><div class="wrap"><div><span class="logo">৳</span><span style="font-size:13px">COMMUNITY FARE GUIDE · ভাড়ানামা</span></div><h1>VaraNama <span style="font-size:.72em">ভাড়ানামা</span></h1><p>Know the route. Know the usual fare. A community-powered fare guide, starting with Dhaka Division — free to browse, built by local contributors.</p><div class="brand-actions"><button class="btn secondary" id="accountBtn" type="button">Sign in / Create account</button><span id="connectionStatus" class="connection-status">Preview mode · shared database not connected</span></div></div></header>
+<main>
+<section class="panel"><h2>Find a route / রুট খুঁজুন</h2><p class="sub">Type in English or Bangla. Pick a suggestion to use a known place name.</p>
+<div class="grid"><div class="field"><label for="from">From / যেখান থেকে</label><div class="place-input-wrap"><input id="from" placeholder="Farmgate / ফার্মগেট" autocomplete="off"><div class="place-suggestions" id="fromSuggestions"></div></div><div class="suggestions" id="sfrom"></div><div class="hint">Select a suggestion or enter a custom name.</div></div>
+<div class="field"><label for="to">To / যেখানে যাবেন</label><div class="place-input-wrap"><input id="to" placeholder="Gulistan / গুলিস্তান" autocomplete="off"><div class="place-suggestions" id="toSuggestions"></div></div>
+<div class="main-location-row"><button class="main-location-btn" type="button" id="useCurrentMain">◎ Use my current location</button><span class="main-location-status" id="currentMainStatus">Use your location to suggest nearby places.</span></div><div class="suggestions" id="sto"></div></div>
+<div><label for="vehicle">Transport / যানবাহন</label><select id="vehicle"><option>CNG auto-rickshaw</option><option>Easy bike / ইজিবাইক</option><option>Battery rickshaw / ব্যাটারিচালিত রিকশা</option><option>Pedal rickshaw / প্যাডেল রিকশা</option><option>Local bus / লোকাল বাস</option><option>Leguna / লেগুনা</option></select></div>
+<div><label for="ride">Ride type / যাত্রার ধরন</label><select id="ride"><option value="reserved">Reserved / পুরো গাড়ি</option><option value="shared">Shared / শেয়ার</option></select></div></div>
+<div class="actions"><button class="btn primary" id="check">Check fare reports</button><button class="btn secondary" id="swap">Swap route ⇅</button></div>
+<div class="result" id="result"><h3>Selected route</h3><div class="route" id="route"></div><div class="muted" id="meta"></div><div class="faregrid"><div class="fare"><b>Typical fare</b><span id="typical">No reports yet</span></div><div class="fare"><b>Recent range</b><span id="range">No reports yet</span></div><div class="fare"><b>Reports</b><span id="count">0</span></div></div><div class="notice" id="note">No fare reports yet for this exact route. Reports are not official rates.</div></div></section>
+<section class="panel"><h2>Add a missing place / নতুন জায়গা যোগ করুন</h2><p class="sub">Suggest a locality, market, stop, or landmark. Contributions are reviewed to prevent duplicates; approved new places earn 5 XP.</p>
+<div class="grid"><div><label for="newname">Common name</label><input id="newname" placeholder="e.g. Iskaton"><button class="map-btn" type="button" data-map-target="newplace">🗺️ Find exact place name</button></div><div><label for="newbn">Bangla name (optional)</label><input id="newbn" placeholder="ইস্কাটন"></div><div><label for="area">Area / nearby landmark</label><input id="area" placeholder="Ramna, Dhaka"></div><div><label for="alias">Other spelling (optional)</label><input id="alias" placeholder="Eskaton"></div></div>
+<div class="actions"><button class="btn primary" id="add">Add place</button></div><div class="status" id="placestatus"></div><div class="list" id="customlist"></div></section>
+<section class="panel"><h2>Report a fare / ভাড়া জানান</h2><p class="sub">Enter what you actually paid or were quoted. Don't submit guesses.</p>
+<div class="grid"><div><label for="rf">From</label><div class="place-input-wrap"><input id="rf" placeholder="Start place" autocomplete="off"><div class="place-suggestions" id="rfSuggestions"></div></div><div class="suggestions" id="srf"></div></div><div><label for="rt">To</label><div class="place-input-wrap"><input id="rt" placeholder="Destination" autocomplete="off"><div class="place-suggestions" id="rtSuggestions"></div></div>
+<div class="main-location-row"><button class="main-location-btn" type="button" id="useCurrentReport">◎ Use my current location</button><span class="main-location-status" id="currentReportStatus">Suggest nearby places from your location.</span></div><div class="suggestions" id="srt"></div></div><div><label for="rv">Transport</label><select id="rv"><option>CNG auto-rickshaw</option><option>Easy bike / ইজিবাইক</option><option>Battery rickshaw / ব্যাটারিচালিত রিকশা</option><option>Pedal rickshaw / প্যাডেল রিকশা</option><option>Local bus / লোকাল বাস</option><option>Leguna / লেগুনা</option></select></div><div><label for="rr">Ride type</label><select id="rr"><option value="reserved">Reserved / পুরো গাড়ি</option><option value="shared">Shared / শেয়ার</option></select></div><div><label for="fare">Fare paid (৳)</label><input id="fare" type="number" min="1" placeholder="e.g. 120"></div><div><label for="date">Date</label><input id="date" type="date"></div></div>
+<div class="actions"><button class="btn primary" id="report">Save fare report</button></div><div class="status" id="reportstatus"></div><div class="notice">Fare reports are community submissions, not official rates. Sign in with a verified email to contribute; approved reports will be shared with the community.</div></section>
+<section class="panel" id="communityPanel"><div class="community-head"><div><h2>Contributor hub · XP & rankings</h2><p class="sub">Browse without an account. Sign in to contribute, earn XP, unlock achievements, and redeem limited Pro access.</p></div><button class="btn secondary" id="openRewards" type="button">XP & Pro rewards</button></div><div class="stats-grid"><div class="stat-card"><span>Your XP</span><strong id="myXp">—</strong></div><div class="stat-card"><span>Your level</span><strong id="myLevel">Visitor</strong></div><div class="stat-card"><span>Pro status</span><strong id="myPro">Not active</strong></div></div><h3>Leaderboard · worldwide</h3><div id="leaderboard" class="leaderboard"><p class="status">Connect the shared database to load community rankings.</p></div><div id="adminPanel" class="reward-panel" hidden><h3>Moderator queue</h3><p class="hint">Review pending community submissions. Approving a genuinely new place grants 5 XP; approving a useful fare report grants 3 XP.</p><div id="moderationQueue" class="leaderboard"><p class="status">No pending submissions loaded.</p></div><p id="moderationStatus" class="status"></p></div><div id="rewardPanel" class="reward-panel" hidden><h3>Redeem XP for Pro</h3><p class="hint">Pro adds convenience features; core fare browsing stays free.</p><div class="reward-actions"><button class="btn secondary redeem" data-days="1" data-cost="100">1 day · 100 XP</button><button class="btn secondary redeem" data-days="7" data-cost="500">7 days · 500 XP</button><button class="btn secondary redeem" data-days="30" data-cost="1500">30 days · 1,500 XP</button></div><p id="rewardStatus" class="status"></p></div></section>
+<section class="panel"><h2>Starter place list</h2><p class="sub">Small test list, not a complete map of Dhaka.</p><div class="list" id="seedlist"></div></section>
+</main>
+<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><button class="close-modal" id="accountClose" type="button" aria-label="Close">×</button><h2 id="accountTitle">Join the VaraNama community</h2><p class="sub">Browsing is always free. Verify your email to add places or report fares and earn XP.</p><div id="signedOutForm"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"><label for="authUsername" style="margin-top:12px">Public username</label><input id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Choose a display name"><div class="actions"><button class="btn primary" id="sendMagicLink" type="button">Email me a sign-in link</button></div><p class="hint">Your email stays private. Only your chosen username appears on the leaderboard.</p></div><div id="signedInPanel" hidden><p id="accountEmail" class="status"></p><div class="actions"><button class="btn secondary" id="signOutBtn" type="button">Sign out</button></div></div><p id="authStatus" class="status" aria-live="polite"></p></div></div>
+<div class="map-modal" id="mapModal" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+ <div class="map-card">
+  <h2 id="mapTitle">Find the place's recognized name</h2>
+  <p class="sub">Use the map to identify the recognized place name. Search for a landmark, or use your current location; check the name and nearby area before using it.</p>
+  <div class="map-search"><input id="mapQuery" placeholder="Search a place e.g. Eskaton, Dhaka" autocomplete="off"><button class="btn primary" id="mapSearch" type="button">Search map</button><button class="btn secondary" id="mapCurrent" type="button">◎ Use my current location</button><button class="btn secondary" id="mapClose" type="button">Close</button></div>
+  <div class="map-status" id="mapStatus">Map tiles use OpenStreetMap. If this page was opened as a file (file://), run it from localhost using the included start script so tile requests have a normal web origin.</div>
+  <div class="map-results" id="mapResults"></div>
+  <div id="map"></div>
+  <div class="map-selected" id="mapSelected">No place selected yet.</div>
+  <div class="actions"><button class="btn primary" id="mapUse" type="button" disabled>Use this place name</button><button class="btn secondary" id="mapReset" type="button">Clear selection</button></div>
+  <p class="hint">Your browser will ask permission before sharing your current location. Location works on HTTPS or localhost, not reliably when opening the HTML directly as a file. OpenStreetMap/Nominatim public services have usage limits; no paid API key is required.</p>
+ </div>
+</div>
+<footer>VaraNama · Community-powered fare guide · Free to browse worldwide.</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+// V8: autocomplete on the main page. Map lookup enriches suggestions only after a user types;
+// users no longer need to open a separate map picker for normal place selection.
+const suggestionTargets = ["from","to","rf","rt"];
+const remoteSuggestionCache = new Map();
+let remoteSuggestionTimer = null;
+function normalPlaceText(s){
+  return String(s||"").toLocaleLowerCase().normalize("NFKC")
+    .replace(/[.,\-_/()]/g," ").replace(/\s+/g," ").trim();
+}
+function placeSearchScore(query, place){
+  const q=normalPlaceText(query);
+  const candidates=[place.name,place.bn,...(place.aliases||[])].filter(Boolean);
+  let best=0;
+  for(const value of candidates){
+    const c=normalPlaceText(value);
+    if(c===q) best=Math.max(best,100);
+    else if(c.startsWith(q)) best=Math.max(best,90);
+    else if(c.includes(q)) best=Math.max(best,78);
+    else {
+      const qt=q.split(" ").filter(Boolean), ct=c.split(" ").filter(Boolean);
+      const overlap=qt.filter(t=>ct.some(x=>x.startsWith(t)||t.startsWith(x))).length;
+      if(qt.length) best=Math.max(best,Math.round(55*overlap/qt.length));
+    }
+  }
+  return best;
+}
+function uniquePlaceList(list){
+  const seen=new Set();
+  return list.filter(p=>{if(!p||!p.id||seen.has(p.id))return false;seen.add(p.id);return true});
+}
+function makeSuggestionButton(place, typed, isRemote=false){
+  const b=document.createElement("button"); b.type="button"; b.className="place-suggestion";
+  const icon=document.createElement("span"); icon.className="place-suggestion-icon"; icon.textContent=isRemote?"🗺️":"📍";
+  const wrap=document.createElement("span");
+  const main=document.createElement("div"); main.className="place-suggestion-main"; main.textContent=place.name || place.label || typed;
+  const aliases=[place.bn,...(place.aliases||[])].filter(Boolean).filter(x=>normalPlaceText(x)!==normalPlaceText(main.textContent));
+  const area=place.area || place.display_name || (isRemote?"OpenStreetMap result":"Saved place");
+  const sub=document.createElement("div"); sub.className="place-suggestion-sub";
+  sub.textContent=[aliases.slice(0,2).join(" · "),area].filter(Boolean).join(" — ");
+  wrap.append(main,sub);b.append(icon,wrap);
+  b.addEventListener("click",()=>{
+    const input=document.getElementById(place._target || "");
+    const target=place._target;
+    const finalInput=target?document.getElementById(target):null;
+    if(!finalInput)return;
+    let selected=place;
+    if(isRemote){
+      // Save a selected map result as a local canonical place, with its coordinates and mapped label.
+      selected=all().find(p=>p.id===place.id) || all().find(p=>normalPlaceText(p.name)===normalPlaceText(place.name)&&normalPlaceText(p.area)===normalPlaceText(place.area));
+      if(!selected){
+        selected={id:makeId(),name:place.name||place.label,bn:"",aliases:[],area:place.area||"Dhaka Division",
+          lat:Number(place.lat),lon:Number(place.lon),mapLabel:place.display_name||""};
+        custom.push(selected);savePlaces();render();
+      } else if(Number.isFinite(Number(place.lat)) && Number.isFinite(Number(place.lon))){
+        selected.lat=Number(place.lat);selected.lon=Number(place.lon);selected.mapLabel=place.display_name||selected.mapLabel;savePlaces();
+      }
+    }
+    finalInput.value=selected.name;
+    chosen[target]=selected;
+    const box=document.getElementById(target+"Suggestions");if(box){box.classList.remove("open");box.innerHTML=""}
+  });
+  return b;
+}
+function renderPlaceSuggestions(target, query, remoteItems=[]){
+  const box=document.getElementById(target+"Suggestions");
+  if(!box)return;
+  box.innerHTML="";
+  const q=query.trim();
+  if(!q){box.classList.remove("open");return}
+  const local=uniquePlaceList(all().map(p=>({...p,_target:target, _score:placeSearchScore(q,p)}))
+    .filter(p=>p._score>=30).sort((a,b)=>b._score-a._score)).slice(0,5);
+  local.forEach(p=>box.appendChild(makeSuggestionButton(p,q,false)));
+  remoteItems.slice(0,4).forEach((r,i)=>{
+    const mapped={id:"osm-"+target+"-"+i+"-"+normalPlaceText(r.display_name).slice(0,20),name:mapLabel(r),label:mapLabel(r),
+      area:[r.address?.suburb,r.address?.neighbourhood,r.address?.city_district,r.address?.city,r.address?.town,r.address?.state].filter(Boolean).join(", "),
+      display_name:r.display_name,lat:r.lat,lon:r.lon,aliases:[],_target:target};
+    const existing=all().find(p=>placeSearchScore(mapped.name,p)>=78 || (mapped.area && normalPlaceText(p.area)===normalPlaceText(mapped.area)&&normalPlaceText(p.name)===normalPlaceText(mapped.name)));
+    if(existing){
+      const clone={...existing,_target:target};
+      if(!box.querySelector('[data-place-id="'+CSS.escape(existing.id)+'"]')){
+        const btn=makeSuggestionButton(clone,q,false);btn.dataset.placeId=existing.id;box.appendChild(btn);
+      }
+    } else {
+      const btn=makeSuggestionButton(mapped,q,true);btn.dataset.placeId=mapped.id;box.appendChild(btn);
+    }
+  });
+  if(!box.children.length){
+    const empty=document.createElement("div");empty.className="place-suggestion";
+    empty.innerHTML='<span class="place-suggestion-icon">🔎</span><span><div class="place-suggestion-main">No exact match yet</div><div class="place-suggestion-sub">Try a nearby landmark or a different spelling.</div></span>';
+    box.appendChild(empty);
+  }
+  box.classList.add("open");
+}
+async function fetchMapSuggestions(query){
+  if(query.trim().length<3)return [];
+  const key=normalPlaceText(query);
+  if(remoteSuggestionCache.has(key))return remoteSuggestionCache.get(key);
+  const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=4&countrycodes=bd&q="+encodeURIComponent(query+" Dhaka");
+  try{
+    const res=await fetch(url,{headers:{Accept:"application/json"}});
+    if(!res.ok)throw new Error("Search service unavailable");
+    const data=await res.json();remoteSuggestionCache.set(key,data);return data;
+  }catch(e){return []}
+}
+function scheduleSmartSuggest(target, value){
+  // Typing searches the shared/local place registry only. Do not call public Nominatim as keystroke autocomplete.
+  renderPlaceSuggestions(target,value,[]);
+}
+suggestionTargets.forEach(target=>{
+  const input=document.getElementById(target);if(!input)return;
+  input.addEventListener("input",()=>{delete chosen[target];scheduleSmartSuggest(target,input.value)});
+  input.addEventListener("focus",()=>{if(input.value.trim())scheduleSmartSuggest(target,input.value)});
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){const box=document.getElementById(target+"Suggestions");box?.classList.remove("open")}
+  });
+});
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".place-input-wrap"))document.querySelectorAll(".place-suggestions").forEach(box=>box.classList.remove("open"));
+});
+async function applyCurrentLocation(target, statusId){
+  const status=document.getElementById(statusId);
+  if(!navigator.geolocation){status.textContent="Your browser doesn't support location. Type a place name instead.";return}
+  status.textContent="Requesting location permission…";
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat=pos.coords.latitude,lon=pos.coords.longitude;
+    status.textContent="Finding nearby mapped place names…";
+    try{
+      const url="https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+encodeURIComponent(lat)+"&lon="+encodeURIComponent(lon)+"&zoom=18&addressdetails=1";
+      const res=await fetch(url,{headers:{Accept:"application/json"}});
+      if(!res.ok)throw new Error("reverse lookup");
+      const item=await res.json();
+      const name=mapLabel(item);
+      const area=[item.address?.suburb,item.address?.neighbourhood,item.address?.city_district,item.address?.city,item.address?.town,item.address?.state].filter(Boolean).join(", ");
+      const existing=all().find(p=>placeSearchScore(name,p)>=78 || (normalPlaceText(p.name)===normalPlaceText(name)&&normalPlaceText(p.area)===normalPlaceText(area)));
+      let place=existing;
+      if(!place){
+        place={id:makeId(),name,bn:"",aliases:[],area:area||"Dhaka Division",lat,lon,mapLabel:item.display_name||""};
+        custom.push(place);savePlaces();render();
+      }else{place.lat=lat;place.lon=lon;place.mapLabel=item.display_name||place.mapLabel;savePlaces();}
+      const input=document.getElementById(target);input.value=place.name;chosen[target]=place;
+      status.textContent="Suggested nearby place: "+place.name+". Please verify it's the correct stop.";
+    }catch(e){
+      status.textContent="Could not look up a place name. Type the name or try again.";
+    }
+  },err=>{
+    status.textContent=err.code===1?"Location permission denied. Allow it in your browser settings or type a place name.":"Could not get your location. Check device settings or type a place name.";
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+}
+document.getElementById("useCurrentMain")?.addEventListener("click",()=>{
+  // Default current-location action populates the route's From field.
+  applyCurrentLocation("from","currentMainStatus");
+});
+document.getElementById("useCurrentReport")?.addEventListener("click",()=>{
+  applyCurrentLocation("rf","currentReportStatus");
+});
+
+</script>
+<script>
+const seed=[
+["Farmgate","ফার্মগেট",["Farm Gate"],"Tejgaon, Dhaka","4a157817-0562-5d37-824c-b5e8e12e26f3"],
+["Gulistan","গুলিস্তান",["Gulistan More"],"Dhaka","60653d87-6aa8-57fa-9f3a-efad5c608a7a"],
+["Iskaton","ইস্কাটন",["Eskaton","Ishkaton"],"Ramna, Dhaka","4371e1e4-2ea8-55bc-9e39-7df0e3b3472f"],
+["Mohakhali","মহাখালী",["Mohakhali Bus Terminal"],"Dhaka","58bd5043-c92e-56ee-a1e1-0feb0f0dfc34"],
+["Shahbagh","শাহবাগ",["Shahbag"],"Dhaka","0f8849f0-8a63-5c8a-9411-c1ceb8ad03b3"],
+["Motijheel","মতিঝিল",[],"Dhaka","c899f4e3-6628-57be-b9fc-c2d498a6f524"],
+["Dhanmondi","ধানমন্ডি",["Dhanmondi 27"],"Dhaka","b64403d2-01f9-5003-b822-93b34ad367b9"],
+["Mirpur 10","মিরপুর ১০",["Mirpur-10","Mirpur Ten"],"Mirpur, Dhaka","0821536e-4fb4-5fe6-b9c6-7e441f45bb3d"],
+["Uttara","উত্তরা",["Uttara Sector"],"Dhaka","1e0df229-c2aa-57ad-a474-b07d3e5f0c40"],
+["Sayedabad","সায়েদাবাদ",["Saidabad"],"Dhaka","d1ce4b09-2dcc-5379-aaba-5caea880b7ef"],
+["Gabtoli","গাবতলী",["Gabtoli Bus Terminal"],"Dhaka","16c7e1eb-e138-5df7-bcf5-b03f8ae46aba"],
+["Jatrabari","যাত্রাবাড়ী",[],"Dhaka","51da09f0-8e74-5f4e-b7b2-f2900a4a2d0b"],
+["Badda","বাড্ডা",["Badda Link Road"],"Dhaka","f0e052ef-ae9d-588d-aee5-0b7d09278261"],
+["Rampura","রামপুরা",[],"Dhaka","7d7f7fec-6dee-501e-8289-9592f5223a77"],
+["Banani","বনানী",[],"Dhaka","b0ae6b78-0f6f-5a17-8fea-1e6759352504"],
+["Khilgaon","খিলগাঁও",[],"Dhaka","813dee4e-5e8d-5424-8d2d-564ff81bddcd"],
+["New Market","নিউ মার্কেট",["Dhaka New Market"],"Dhaka","478b7aa6-fc2e-5666-b740-f0443cd49216"],
+["Savar","সাভার",[],"Dhaka District","971205dd-8cc4-5965-9870-fdfb04746ca9"],
+["Narayanganj","নারায়ণগঞ্জ",[],"Narayanganj District","b623b047-4588-5406-bbb0-26bf844510a4"],
+["Gazipur Chowrasta","গাজীপুর চৌরাস্তা",["Gazipur Chourasta"],"Gazipur","f4b70087-c724-52fe-81c8-8833a3962e62"]
+];
+const obj=x=>({id:x[4],name:x[0],bn:x[1],aliases:x[2],area:x[3]});
+const seeds=seed.map(obj);
+let custom=JSON.parse(localStorage.getItem("lfbd_v4_places")||localStorage.getItem("lfbd_v3_places")||"[]");
+let aliasOverrides=JSON.parse(localStorage.getItem("lfbd_v4_aliases")||"{}");
+for(const p of seeds){if(aliasOverrides[p.id]){p.aliases=[...new Set([...(p.aliases||[]),...(aliasOverrides[p.id].aliases||[])])];if(aliasOverrides[p.id].bn&&!p.bn)p.bn=aliasOverrides[p.id].bn;}}
+let reports=JSON.parse(localStorage.getItem("lfbd_v4_reports")||"[]");
+const norm=s=>(s||"").toLocaleLowerCase().normalize("NFKC").replace(/[.,\-_/]+/g," ").replace(/\s+/g," ").trim();
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const makeId=()=> "local-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+custom=custom.map(p=>({...p,id:p.id||makeId(),aliases:Array.isArray(p.aliases)?p.aliases:[]}));
+let chosen={from:null,to:null,rf:null,rt:null};
+const all=()=>[...seeds,...custom], labels=p=>[p.name,p.bn,...(p.aliases||[])].filter(Boolean);
+function distance(a,b){let r=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let prev=r[0];r[0]=i;for(let j=1;j<=b.length;j++){let t=r[j];r[j]=Math.min(r[j]+1,r[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=t}}return r[b.length]}
+function score(q,p){q=norm(q);let ls=labels(p).map(norm);if(ls.includes(q))return 100;if(ls.some(x=>x.startsWith(q)))return 75;if(ls.some(x=>x.includes(q)))return 55;if(/^[a-z0-9 ]+$/.test(q)){let best=0;for(let x of ls.filter(x=>/^[a-z0-9 ]+$/.test(x))){if(Math.abs(x.length-q.length)<4&&distance(q,x)<=2)best=Math.max(best,30)}return best}return 0}
+function exact(s){return all().find(p=>labels(p).some(x=>norm(x)===norm(s)))}
+function closest(s){return all().map(p=>({p,s:score(s,p)})).filter(x=>x.s>=25).sort((a,b)=>b.s-a.s)[0]?.p}
+function savePlaces(){localStorage.setItem("lfbd_v4_places",JSON.stringify(custom));localStorage.setItem("lfbd_v4_aliases",JSON.stringify(aliasOverrides))}
+function saveReports(){localStorage.setItem("lfbd_v4_reports",JSON.stringify(reports))}
+function resolveOrCreateLegacy(name){let p=exact(name);if(p)return p;let id=makeId();p={id,name:name||"Unknown place",bn:"",aliases:[],area:"Dhaka Division"};custom.push(p);return p}
+function auto(id,boxid,which){let inp=document.getElementById(id),box=document.getElementById(boxid);if(!inp||!box)return;inp.addEventListener("input",()=>{chosen[which]=null;box.innerHTML="";let q=inp.value.trim();if(q.length<2){box.style.display="none";return}let ms=all().map(p=>({p,s:score(q,p)})).filter(x=>x.s>=30).sort((a,b)=>b.s-a.s).slice(0,7);if(!ms.length){box.style.display="none";return}for(let {p} of ms){let b=document.createElement("button");b.type="button";b.className="suggestion";b.innerHTML=`<strong>${esc(p.name)}${p.bn?" · "+esc(p.bn):""}</strong><small>${esc(p.area||"Dhaka Division")}${p.aliases.length?" · Also: "+esc(p.aliases.join(", ")):""}</small>`;b.onclick=()=>{inp.value=p.name;chosen[which]=p;box.style.display="none"};box.appendChild(b)}box.style.display="block"});document.addEventListener("click",e=>{if(e.target!==inp&&!box.contains(e.target))box.style.display="none"})}
+auto("from","sfrom","from");auto("to","sto","to");auto("rf","srf","rf");auto("rt","srt","rt");
+function ensureReportPlace(which,inputId){let inp=document.getElementById(inputId),p=chosen[which]||exact(inp.value.trim());if(p)return p;return null}
+document.getElementById("check").onclick=()=>{let f=document.getElementById("from").value.trim(),t=document.getElementById("to").value.trim();if(!f||!t){alert("Enter both start and destination places.");return}let fp=chosen.from||exact(f),tp=chosen.to||exact(t),fn=fp?fp.name:f,tn=tp?tp.name:t,v=document.getElementById("vehicle").value,r=document.getElementById("ride").value;let rr=reports.filter(x=>x.fromId&&x.toId?x.fromId===(fp?.id||"")&&x.toId===(tp?.id||"")&&x.vehicle===v&&x.ride===r:norm(x.from)===norm(fn)&&norm(x.to)===norm(tn)&&x.vehicle===v&&x.ride===r);document.getElementById("result").style.display="block";document.getElementById("route").textContent=fn+" → "+tn;document.getElementById("meta").textContent=v+" · "+(r==="shared"?"Shared ride":"Reserved ride");if(rr.length){let fs=rr.map(x=>+x.fare).sort((a,b)=>a-b),n=fs.length,m=n%2?fs[(n-1)/2]:(fs[n/2-1]+fs[n/2])/2;document.getElementById("typical").textContent="৳"+Math.round(m);document.getElementById("range").textContent="৳"+fs[0]+"–৳"+fs[n-1];document.getElementById("count").textContent=n+" report(s)";document.getElementById("note").textContent="Based on locally saved community reports only. The sample may be small or out of date; agree on the fare before travelling."}else{document.getElementById("typical").textContent="No reports yet";document.getElementById("range").textContent="No reports yet";document.getElementById("count").textContent="0 community reports";let h=[];if(!fp){let p=closest(f);if(p)h.push('Did you mean "'+p.name+'"'+(p.bn?" ("+p.bn+")":"")+" for the start?")}if(!tp){let p=closest(t);if(p)h.push('Did you mean "'+p.name+'"'+(p.bn?" ("+p.bn+")":"")+" for the destination?")}document.getElementById("note").textContent=(h.join(" ")||"No fare reports for this exact route and ride type yet.")+" Add a report below to build the guide."}document.getElementById("result").scrollIntoView({behavior:"smooth",block:"nearest"})};
+document.getElementById("swap").onclick=()=>{let a=document.getElementById("from"),b=document.getElementById("to"),v=a.value;a.value=b.value;b.value=v;let p=chosen.from;chosen.from=chosen.to;chosen.to=p};
+function render(){document.getElementById("customlist").innerHTML=custom.length?custom.map((p,i)=>`<span class="chip">${esc(p.name)}${p.bn?" · "+esc(p.bn):""}<button data-i="${i}" aria-label="Remove place">×</button></span>`).join(""):'<span class="status">No custom places added yet.</span>';document.getElementById("customlist").querySelectorAll("button").forEach(b=>b.onclick=()=>{custom.splice(+b.dataset.i,1);savePlaces();render()});document.getElementById("seedlist").innerHTML=all().map(p=>`<span class="chip">${esc(p.name)}${p.bn?" · "+esc(p.bn):""}</span>`).join("")}
+document.getElementById("add").onclick=()=>{let name=document.getElementById("newname").value.trim(),bn=document.getElementById("newbn").value.trim(),area=document.getElementById("area").value.trim(),alias=document.getElementById("alias").value.trim(),s=document.getElementById("placestatus");if(!name){s.textContent="Please enter a common place name.";return}let same=exact(name);if(same){if(alias&&!labels(same).some(x=>norm(x)===norm(alias))){same.aliases.push(alias);if(bn&&!same.bn)same.bn=bn;if(!seeds.includes(same))savePlaces();s.textContent=`“${name}” matches ${same.name}. Added the new spelling as an alias to the existing place.`;render()}else{s.textContent=`That name already points to ${same.name}. Use a different spelling as an alias if needed.`}return}let near=closest(name);if(near&&score(name,near)>=25){if(confirm(`Did you mean “${near.name}”${near.bn?" / "+near.bn:""}? Click OK to add “${name}” as another name for that same place. Click Cancel to create a separate place.`)){near.aliases.push(name);if(alias)near.aliases.push(alias);if(bn&&!near.bn)near.bn=bn;if(seeds.includes(near)){aliasOverrides[near.id]={aliases:near.aliases.filter(a=>!(seed.find(x=>x[4]===near.id)?.[2]||[]).includes(a)),bn:bn||""};}savePlaces();s.textContent=`Added “${name}” as an alternate name for ${near.name}.`;render();return}}
+custom.push({id:makeId(),name,bn,area:area||"Dhaka Division",aliases:alias?[alias]:[]});savePlaces();["newname","newbn","area","alias"].forEach(id=>document.getElementById(id).value="");s.textContent="Added as a separate place. If it is another spelling of an existing place, edit that place's aliases instead.";render()};
+document.getElementById("report").onclick=()=>{let from=document.getElementById("rf").value.trim(),to=document.getElementById("rt").value.trim(),vehicle=document.getElementById("rv").value,ride=document.getElementById("rr").value,fare=Number(document.getElementById("fare").value),date=document.getElementById("date").value,s=document.getElementById("reportstatus");if(!from||!to||!Number.isFinite(fare)||fare<=0){s.textContent="Enter both places and a valid fare amount.";return}let fp=ensureReportPlace("rf","rf"),tp=ensureReportPlace("rt","rt");if(!fp||!tp){s.textContent="Please choose a place suggestion for both ends, or add the missing place above first. This prevents spelling variants becoming separate fare routes.";return}reports.push({fromId:fp.id,toId:tp.id,from:fp.name,to:tp.name,vehicle,ride,fare,date:date||new Date().toISOString().slice(0,10)});saveReports();s.textContent=`Saved ৳${fare} for ${fp.name} → ${tp.name}. Stored by place ID, so alternate spellings share the same route.`;document.getElementById("fare").value=""};
+document.getElementById("report").insertAdjacentHTML("beforebegin","");
+document.getElementById("reportstatus").textContent="For consistent reports, select a suggestion for both places before saving.";
+// migrate previous v3 reports once into ID-based records where possible
+if(!localStorage.getItem("lfbd_v4_migrated")){let old=JSON.parse(localStorage.getItem("lfbd_v3_reports")||"[]");for(const r of old){let fp=exact(r.from)||resolveOrCreateLegacy(r.from),tp=exact(r.to)||resolveOrCreateLegacy(r.to);reports.push({...r,fromId:fp.id,toId:tp.id,from:fp.name,to:tp.name})}savePlaces();saveReports();localStorage.setItem("lfbd_v4_migrated","1")}
+savePlaces();render();
+
+// OpenStreetMap map picker (Leaflet + public Nominatim geocoder; no API key).
+let mapTarget = null, mapInstance = null, mapMarker = null, mapChoice = null, mapLayer = null;
+function mapStatus(msg){ document.getElementById("mapStatus").textContent = msg; }
+function mapLabel(item){
+  if (item.name && item.name.trim()) return item.name.trim();
+  const a=item.address||{};
+  return a.amenity||a.shop||a.tourism||a.leisure||a.public_transport||a.railway||a.bus_stop||
+         a.road||a.pedestrian||a.neighbourhood||a.suburb||a.quarter||a.city_district||
+         a.village||a.town||a.city||a.county||"Unnamed map location";
+}
+function openMapPicker(target){
+  mapTarget = target; mapChoice = null;
+  document.getElementById("mapModal").style.display = "flex";
+  document.getElementById("mapResults").innerHTML = "";
+  document.getElementById("mapSelected").textContent = "Search for a landmark, use current location, or tap the map. The label may not be the name used locally.";
+  document.getElementById("mapUse").disabled = true;
+  document.getElementById("mapQuery").value = "";
+  mapStatus("Loading map…");
+  if(!window.L){ mapStatus("The Leaflet map library did not load. Check your internet connection, content blockers, or firewall, then reload the page."); return; }
+  if(!mapInstance){
+    mapInstance = L.map("map").setView([23.8103,90.4125], 12);
+    mapLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
+    });
+    let tileErrors = 0;
+    mapLayer.on("tileerror", () => {
+      tileErrors++;
+      if (tileErrors >= 2) {
+        mapStatus(location.protocol === "file:"
+          ? "Map tiles are being blocked because this page was opened directly from a file. Close it and launch START_LOCAL_VARANAMA.bat, then open http://localhost:8000."
+          : "Map tiles could not load. Check your internet connection, browser extensions, firewall, or whether the public tile service is temporarily limiting requests.");
+      }
+    });
+    mapLayer.on("load", () => {
+      tileErrors = 0;
+      mapStatus("Map loaded. Search for a landmark, use current location, or tap the map to inspect a spot.");
+    });
+    mapLayer.addTo(mapInstance);
+    if (location.protocol === "file:") {
+      mapStatus("You opened the HTML directly from a file. Public map tiles may block these requests. For local testing, close this page and run START_LOCAL_VARANAMA.bat, then open http://localhost:8000.");
+    }
+    mapInstance.on("click", async e => {
+      setMapPoint(e.latlng.lat, e.latlng.lng, null);
+      await reverseMapPoint(e.latlng.lat, e.latlng.lng);
+    });
+  }
+  setTimeout(()=>mapInstance.invalidateSize(), 120);
+  const existing = (target !== "newplace" && chosen[target]) ? chosen[target] : null;
+  if(existing && Number.isFinite(existing.lat) && Number.isFinite(existing.lon)){
+    mapInstance.setView([existing.lat,existing.lon],16);
+    setMapPoint(existing.lat,existing.lon,{name:existing.name,display_name:existing.name+", "+(existing.area||"Dhaka Division"),lat:existing.lat,lon:existing.lon});
+  }else{
+    mapInstance.setView([23.8103,90.4125],12);
+  }
+}
+function setMapPoint(lat,lon,item){
+  mapChoice = {lat:Number(lat),lon:Number(lon),name:item ? mapLabel(item) : "Map pin",display_name:item?.display_name||"",address:item?.address||{}};
+  if(mapMarker) mapMarker.setLatLng([lat,lon]); else mapMarker=L.marker([lat,lon],{draggable:true}).addTo(mapInstance);
+  mapMarker.off("dragend").on("dragend",async e=>{const p=e.target.getLatLng();setMapPoint(p.lat,p.lng,null);await reverseMapPoint(p.lat,p.lng);});
+  document.getElementById("mapSelected").textContent = (mapChoice.name || "Unnamed map location") + (mapChoice.display_name ? " — " + mapChoice.display_name : "") + " · " + lat.toFixed(5)+", "+lon.toFixed(5);
+  document.getElementById("mapUse").disabled = false;
+}
+async function reverseMapPoint(lat,lon){
+  mapStatus("Looking up the selected location…");
+  try{
+    const url="https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+encodeURIComponent(lat)+"&lon="+encodeURIComponent(lon)+"&zoom=18&addressdetails=1";
+    const r=await fetch(url,{headers:{Accept:"application/json"}});
+    if(!r.ok) throw new Error("geocoder response");
+    const item=await r.json();
+    if(item && item.display_name){
+      mapChoice.name=mapLabel(item);mapChoice.display_name=item.display_name;mapChoice.address=item.address||{};
+      document.getElementById("mapSelected").textContent=mapChoice.name+" — "+item.display_name+" · "+lat.toFixed(5)+", "+lon.toFixed(5);
+      mapStatus("Found a map label. Check whether it is the actual local stop/market name or only a road or nearby landmark.");
+    }else mapStatus("No exact map label was found. You can still use the pin and enter a clearer name.");
+  }catch(e){mapStatus("Reverse lookup unavailable. You can still use the pin, but enter/check the place name yourself.");}
+}
+document.getElementById("mapSearch").onclick=async()=>{
+  const q=document.getElementById("mapQuery").value.trim();
+  if(!q){mapStatus("Enter a place name to search.");return}
+  mapStatus("Searching OpenStreetMap…");document.getElementById("mapResults").innerHTML="";
+  try{
+    const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&countrycodes=bd&q="+encodeURIComponent(q);
+    const r=await fetch(url,{headers:{Accept:"application/json"}});
+    if(!r.ok) throw new Error("geocoder response");
+    const results=await r.json();
+    if(!results.length){mapStatus("No results. Try a nearby landmark, market, road, or area name.");return}
+    results.forEach(item=>{
+      const b=document.createElement("button");b.type="button";b.className="map-result";b.textContent=item.display_name;
+      b.onclick=()=>{const lat=Number(item.lat),lon=Number(item.lon);mapInstance.setView([lat,lon],17);setMapPoint(lat,lon,item);mapStatus("Place selected. Review the recognized name and nearby area before using it.");};
+      document.getElementById("mapResults").appendChild(b);
+    });
+    mapStatus("Choose the best matching result. Search uses OpenStreetMap community data and may not include every local stop.");
+  }catch(e){mapStatus("Search is temporarily unavailable. Try again later or use a different spelling.");}
+};
+
+document.getElementById("mapCurrent").onclick=()=>{
+  if(!navigator.geolocation){
+    mapStatus("This browser does not support location sharing. Search for a place or tap the map instead.");
+    return;
+  }
+  if(!window.L){
+    mapStatus("The map library did not load. Check your connection and reload the page.");
+    return;
+  }
+  mapStatus("Requesting your location. Please allow location access in your browser.");
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat=pos.coords.latitude, lon=pos.coords.longitude;
+    if(!mapInstance) openMapPicker(mapTarget || "from");
+    mapInstance.setView([lat,lon],17);
+    setMapPoint(lat,lon,null);
+    mapStatus("Current location found. Looking up the nearest mapped place name…");
+    await reverseMapPoint(lat,lon);
+    mapStatus("Current location found. Review the mapped name and nearby area before using it; GPS position may be near, but not exactly at, the stop.");
+  }, err=>{
+    const msg=err.code===1
+      ? "Location permission was denied. Allow location access for this site in your browser, or search for the place manually."
+      : err.code===2
+      ? "Your device could not determine its location. Check device location settings or search manually."
+      : "Location request timed out. Try again or search manually.";
+    mapStatus(msg);
+  }, {enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+};
+
+document.getElementById("mapClose").onclick=()=>{document.getElementById("mapModal").style.display="none"};
+document.getElementById("mapReset").onclick=()=>{mapChoice=null;if(mapMarker){mapInstance.removeLayer(mapMarker);mapMarker=null}document.getElementById("mapSelected").textContent="No place selected yet.";document.getElementById("mapUse").disabled=true};
+document.querySelectorAll("[data-map-target]").forEach(b=>b.addEventListener("click",()=>openMapPicker(b.dataset.mapTarget)));
+document.getElementById("mapUse").onclick=()=>{
+  if(!mapChoice || !mapTarget)return;
+  const item=mapChoice;
+  if(!item.name || item.name==="Unnamed map location" || item.name==="Map pin"){
+    mapStatus("This spot has no recognized name in the map data. Search for a nearby landmark, or close the map and enter the local place name yourself.");
+    return;
+  }
+  const addr=item.address||{};
+  const area=[addr.suburb,addr.neighbourhood,addr.city_district,addr.city,addr.town,addr.state].filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i).join(", ") || "Dhaka Division";
+  let canonical=exact(item.name);
+  if(!canonical && mapTarget!=="newplace"){
+    // A user can pick a suggestion if one already matches the geocoder label.
+    canonical=closest(item.name);
+    if(canonical && score(item.name,canonical)<55) canonical=null;
+  }
+  if(mapTarget==="newplace"){
+    const nameField=document.getElementById("newname");
+    const bnField=document.getElementById("newbn");
+    const areaField=document.getElementById("area");
+    nameField.value=item.name==="Map pin"?"":item.name;
+    areaField.value=area;
+    // Keep coordinates on the pending new-place form until Add place is pressed.
+    pendingNewPlaceGeo={lat:item.lat,lon:item.lon,display_name:item.display_name};
+    document.getElementById("placestatus").textContent="Map location selected. Check/edit the common name and then press Add place to save it.";
+  }else{
+    const input=document.getElementById(mapTarget);
+    if(canonical){
+      input.value=canonical.name;chosen[mapTarget]=canonical;
+      if(Number.isFinite(item.lat)&&Number.isFinite(item.lon)){canonical.lat=item.lat;canonical.lon=item.lon;canonical.mapLabel=item.display_name;savePlaces();}
+    }else{
+      // Use map-picked label as a place proposal; user explicitly chose the pin.
+      const name=item.name==="Map pin"?"Pinned location":item.name;
+      let place=all().find(p=>p.name===name && p.area===area);
+      if(!place){place={id:makeId(),name,bn:"",aliases:[],area,lat:item.lat,lon:item.lon,mapLabel:item.display_name};custom.push(place);savePlaces();render();}
+      else {place.lat=item.lat;place.lon=item.lon;place.mapLabel=item.display_name;savePlaces();}
+      input.value=place.name;chosen[mapTarget]=place;
+    }
+  }
+  document.getElementById("mapModal").style.display="none";
+};
+let pendingNewPlaceGeo=null;
+const previousAddHandler=document.getElementById("add").onclick;
+document.getElementById("add").onclick=function(){
+  const before=custom.length;
+  previousAddHandler();
+  if(custom.length>before && pendingNewPlaceGeo){
+    const p=custom[custom.length-1];p.lat=pendingNewPlaceGeo.lat;p.lon=pendingNewPlaceGeo.lon;p.mapLabel=pendingNewPlaceGeo.display_name;
+    savePlaces();pendingNewPlaceGeo=null;render();
+    document.getElementById("placestatus").textContent += " Map pin saved with this place.";
+  }
+};
+// Escape key closes the map picker.
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("mapModal").style.display="none"});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script>
+// VaraNama community layer. Public browsing remains available without signing in.
+(function(){
+ const cfg=window.VARANAMA_CONFIG||{};
+ const configured=!!(cfg.supabaseUrl&&cfg.supabaseAnonKey&&window.supabase);
+ const client=configured?window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey):null;
+ let session=null,profile=null,queuedAction=null;
+ const $=id=>document.getElementById(id);
+ const status=(id,msg)=>{if($(id))$(id).textContent=msg};
+ const modal=()=>{$('accountModal').classList.add('open');setTimeout(()=>$('authEmail').focus(),50)};
+ const close=()=> $('accountModal').classList.remove('open');
+ function requireContributor(action){
+   queuedAction=action;if(action)sessionStorage.setItem('varanama_queued_action',action);
+   if(!configured){modal();status('authStatus','The shared database is not connected yet. Finish the Supabase setup in SETUP.md before public contributions can be saved.');return false}
+   if(!session||!session.user){modal();status('authStatus','Sign in with a verified email to contribute.');return false}
+   if(!session.user.email_confirmed_at){modal();status('authStatus','Please verify your email before contributing.');return false}
+   if(!profile||!profile.username){modal();status('authStatus','Choose a public username to continue.');return false}
+   return true;
+ }
+ function renderProfile(){
+   const logged=!!session?.user;
+   $('accountBtn').textContent=logged?('My account · '+(profile?.username||'Contributor')):'Sign in / Create account';
+   $('signedOutForm').hidden=logged;$('signedInPanel').hidden=!logged;
+   if(logged){status('accountEmail',session.user.email||'Signed in');$('authUsername').value=profile?.username||'';$('accountTitle').textContent='Your VaraNama account'}else{$('accountTitle').textContent='Join the VaraNama community'}
+   $('myXp').textContent=profile?String(profile.xp||0):'—';
+   $('myLevel').textContent=profile?levelName(profile.xp||0):'Visitor';
+   const active=profile?.pro_until&&new Date(profile.pro_until)>new Date();
+   $('myPro').textContent=active?('Until '+new Date(profile.pro_until).toLocaleDateString()):'Not active';
+   $('adminPanel').hidden=!(profile&&profile.is_admin);
+ }
+ function levelName(x){if(x>=1500)return 'Local Legend';if(x>=500)return 'Local Expert';if(x>=200)return 'Navigator';if(x>=50)return 'Explorer';return 'Newcomer'}
+ async function loadProfile(){
+   if(!client||!session?.user){profile=null;renderProfile();return}
+   const {data,error}=await client.from('profiles').select('id,username,xp,pro_until,created_at,is_admin').eq('id',session.user.id).maybeSingle();
+   if(error){status('authStatus','Could not load your profile: '+error.message);return}
+   profile=data;
+   if(!profile){const uname=(sessionStorage.getItem('varanama_pending_username')||$('authUsername').value||'').trim();if(uname){const set=await client.rpc('set_username',{p_username:uname});if(!set.error){sessionStorage.removeItem('varanama_pending_username');const r=await client.from('profiles').select('id,username,xp,pro_until,created_at,is_admin').eq('id',session.user.id).maybeSingle();if(!r.error)profile=r.data;}}}
+   renderProfile();
+ }
+ async function loadLeaderboard(){
+   if(!client){$('leaderboard').innerHTML='<p class="status">Leaderboard becomes live after the shared database is connected.</p>';return}
+   const {data,error}=await client.rpc('get_leaderboard',{p_limit:10});
+   if(error){$('leaderboard').innerHTML='<p class="status">Leaderboard is waiting for database setup.</p>';return}
+   $('leaderboard').innerHTML=data.length?data.map((p,i)=>'<div class="leader-row"><div class="leader-left"><span class="rank-bubble">'+(i+1)+'</span><div><div class="leader-name">'+safe(p.username)+'</div><div class="leader-meta">'+safe(p.level_name||levelName(p.xp||0))+'</div></div></div><strong>'+Number(p.xp||0).toLocaleString()+' XP</strong></div>').join(''):'<p class="status">No contributors yet. Be the first!</p>';
+ }
+ function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ async function loadSharedData(){
+   if(!client){$('connectionStatus').textContent='Preview mode · database setup required';return}
+   $('connectionStatus').textContent='Connecting to shared community…';
+   try{
+    const {data:places,error:pe}=await client.from('places').select('id,name,name_bn,aliases,area,lat,lon,map_label').eq('status','approved').limit(5000);
+    if(pe)throw pe;
+    if(places?.length){const mapped=places.map(p=>({id:p.id,name:p.name,bn:p.name_bn||'',aliases:Array.isArray(p.aliases)?p.aliases:[],area:p.area||'',lat:p.lat,lon:p.lon,mapLabel:p.map_label||''}));
+      const seedIds=new Set(seeds.map(p=>p.id));
+      for(const p of mapped){const ix=seeds.findIndex(s=>s.id===p.id);if(ix>=0)seeds[ix]=p;else {const ci=custom.findIndex(s=>s.id===p.id);if(ci>=0)custom[ci]=p;else custom.push(p)}}
+      // Hide local custom entries once the shared registry is available; they are not published contributions.
+      custom=custom.filter(p=>mapped.some(m=>m.id===p.id));render();
+    }
+    const {data:fares,error:fe}=await client.from('fare_reports').select('id,from_place_id,to_place_id,vehicle,ride_type,fare,travel_date').eq('status','approved').order('created_at',{ascending:false}).limit(5000);
+    if(fe)throw fe;
+    if(fares){reports=fares.map(r=>({id:r.id,fromId:r.from_place_id,toId:r.to_place_id,from:all().find(p=>p.id===r.from_place_id)?.name||'',to:all().find(p=>p.id===r.to_place_id)?.name||'',vehicle:r.vehicle,ride:r.ride_type,fare:r.fare,date:r.travel_date}));}
+    $('connectionStatus').textContent='Shared database connected';
+   }catch(e){$('connectionStatus').textContent='Database setup needed';console.warn('VaraNama shared data:',e.message||e)}
+ }
+ async function runQueued(){const action=queuedAction||sessionStorage.getItem('varanama_queued_action');queuedAction=null;sessionStorage.removeItem('varanama_queued_action');if(action==='place')await submitPlace();if(action==='fare')await submitFare()}
+ async function submitPlace(){
+   const name=$('newname').value.trim(),bn=$('newbn').value.trim(),area=$('area').value.trim(),alias=$('alias').value.trim();
+   if(!name){status('placestatus','Please enter a common place name.');return}
+   const near=closest(name);if(near&&score(name,near)>=25&&!confirm('This may be the same as “'+near.name+'”. Submit for duplicate review anyway?')){status('placestatus','No submission made. You can add the spelling as an alias through review.');return}
+   const geo=(typeof pendingNewPlaceGeo!=='undefined'&&pendingNewPlaceGeo)?pendingNewPlaceGeo:{};
+   const {data,error}=await client.rpc('submit_place',{p_name:name,p_name_bn:bn||null,p_area:area||'Dhaka Division',p_aliases:alias?[alias]:[],p_lat:Number.isFinite(Number(geo.lat))?Number(geo.lat):null,p_lon:Number.isFinite(Number(geo.lon))?Number(geo.lon):null,p_map_label:geo.display_name||null});
+   if(error){status('placestatus','Could not submit place: '+error.message);return}
+   ['newname','newbn','area','alias'].forEach(id=>$(id).value='');status('placestatus','Place submitted for review. You will receive +5 XP if it is approved as a genuinely new place.');if(typeof pendingNewPlaceGeo!=='undefined')pendingNewPlaceGeo=null;
+ }
+ async function submitFare(){
+   const from=$('rf').value.trim(),to=$('rt').value.trim(),fp=ensureReportPlace('rf','rf'),tp=ensureReportPlace('rt','rt'),fare=Number($('fare').value);
+   if(!from||!to||!fp||!tp||!Number.isFinite(fare)||fare<=0){status('reportstatus','Choose recognized suggestions for both places and enter a valid fare.');return}
+   const {error}=await client.rpc('submit_fare_report',{p_from_place_id:fp.id,p_to_place_id:tp.id,p_vehicle:$('rv').value,p_ride_type:$('rr').value,p_fare:fare,p_travel_date:$('date').value||new Date().toISOString().slice(0,10)});
+   if(error){status('reportstatus','Could not submit report: '+error.message);return}
+   $('fare').value='';status('reportstatus','Fare report submitted for review. Approved useful reports can earn +3 XP.');
+ }
+ // Capture before the prototype's local-only handlers so public contributions never falsely appear saved locally.
+ $('add').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(requireContributor('place'))submitPlace()},{capture:true});
+ $('report').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(requireContributor('fare'))submitFare()},{capture:true});
+ $('accountBtn').addEventListener('click',()=>{modal();status('authStatus','')});$('accountClose').addEventListener('click',close);$('accountModal').addEventListener('click',e=>{if(e.target===$('accountModal'))close()});
+ $('sendMagicLink').addEventListener('click',async()=>{
+   if(!configured){status('authStatus','To enable accounts, create a Supabase project and follow SETUP.md.');return}
+   const email=$('authEmail').value.trim(),username=$('authUsername').value.trim();if(!email){status('authStatus','Enter your email address.');return}if(!username||username.length<3){status('authStatus','Choose a public username with at least 3 characters.');return}if(!/^[\p{L}\p{N}_ .-]{3,24}$/u.test(username)){status('authStatus','Use 3–24 letters, numbers, spaces, dots, underscores, or hyphens.');return}
+   sessionStorage.setItem('varanama_pending_username',username);
+   const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,data:{username}}});
+   status('authStatus',error?'Could not send sign-in email: '+error.message:'Check your email for the secure sign-in link, then return here.');
+ });
+ $('signOutBtn').addEventListener('click',async()=>{if(client)await client.auth.signOut();session=null;profile=null;renderProfile();close()});
+ $('openRewards').addEventListener('click',()=>$('rewardPanel').hidden=!$('rewardPanel').hidden);
+ document.querySelectorAll('.redeem').forEach(b=>b.addEventListener('click',async()=>{
+   if(!requireContributor(null))return;const days=Number(b.dataset.days);status('rewardStatus','Processing…');const {data,error}=await client.rpc('redeem_pro',{p_days:days});if(error){status('rewardStatus','Redemption failed: '+error.message);return}status('rewardStatus','Pro activated until '+new Date(data).toLocaleString()+'.');await loadProfile();
+ }));
+ async function loadModerationQueue(){
+   if(!client||!profile?.is_admin)return;
+   const [places,fares]=await Promise.all([
+     client.from('places').select('id,name,name_bn,area,aliases,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(50),
+     client.from('fare_reports').select('id,from_place_id,to_place_id,vehicle,ride_type,fare,travel_date,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(50)
+   ]);
+   if(places.error||fares.error){$('moderationQueue').innerHTML='<p class="status">Could not load review queue. Check moderator permissions.</p>';return}
+   const items=[];
+   for(const p of (places.data||[]))items.push({kind:'place',id:p.id,title:p.name+(p.name_bn?' · '+p.name_bn:''),detail:(p.area||'')+(p.aliases?.length?' · Also: '+p.aliases.join(', '):'')});
+   for(const f of (fares.data||[])){const a=all().find(p=>p.id===f.from_place_id)?.name||'Unknown origin',b=all().find(p=>p.id===f.to_place_id)?.name||'Unknown destination';items.push({kind:'fare',id:f.id,title:a+' → '+b,detail:f.vehicle+' · '+f.ride_type+' · ৳'+f.fare+' · '+f.travel_date})}
+   $('moderationQueue').innerHTML=items.length?items.map(it=>'<div class="leader-row moderation-item"><div style="min-width:0;flex:1"><div class="leader-name">'+safe(it.title)+'</div><div class="leader-meta">'+safe(it.kind.toUpperCase()+' · '+it.detail)+'</div></div><div class="moderation-actions"><button class="btn primary" data-review="approved" data-kind="'+it.kind+'" data-id="'+it.id+'">Approve</button><button class="btn secondary" data-review="rejected" data-kind="'+it.kind+'" data-id="'+it.id+'">Reject</button></div></div>').join(''):'<p class="status">No pending submissions. Nice work!</p>';
+   $('moderationQueue').querySelectorAll('[data-review]').forEach(btn=>btn.addEventListener('click',async()=>{
+     btn.disabled=true;status('moderationStatus','Saving review…');const {error}=await client.rpc('review_contribution',{p_kind:btn.dataset.kind,p_id:btn.dataset.id,p_decision:btn.dataset.review,p_canonical_place_id:null});
+     if(error){status('moderationStatus','Review failed: '+error.message);btn.disabled=false;return}
+     status('moderationStatus','Contribution '+btn.dataset.review+'. XP updated if approved.');await loadModerationQueue();await loadProfile();await loadLeaderboard();await loadSharedData();
+   }));
+ }
+ async function boot(){
+   if(!configured){renderProfile();await loadLeaderboard();return}
+   const {data:{session:s}}=await client.auth.getSession();session=s;
+   if(session?.user){const pending=sessionStorage.getItem('varanama_pending_username');if(pending){const {error}=await client.rpc('set_username',{p_username:pending});if(!error)sessionStorage.removeItem('varanama_pending_username')}}
+   client.auth.onAuthStateChange((_event,s)=>{session=s;setTimeout(async()=>{const pending=sessionStorage.getItem('varanama_pending_username');if(session?.user&&pending){const changed=await client.rpc('set_username',{p_username:pending});if(!changed.error)sessionStorage.removeItem('varanama_pending_username');else status('authStatus','Signed in, but username could not be saved: '+changed.error.message)}await loadProfile();renderProfile();await loadLeaderboard();await loadModerationQueue();if(session?.user&&(queuedAction||sessionStorage.getItem('varanama_queued_action')))await runQueued();},0)});
+   await loadProfile();renderProfile();await loadSharedData();await loadLeaderboard();await loadModerationQueue();if(session?.user&&sessionStorage.getItem('varanama_queued_action'))await runQueued();
+ }
+ boot();
+})();
+</script>
+</body></html>
