@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VaraNama — Community Fare Guide</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VaraNama (ভাড়ানামা) — Community Fare Guide</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2215%22 fill=%22%23075e45%22/%3E%3Ctext x=%2232%22 y=%2245%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial,sans-serif%22%3E%E0%A7%B3%3C/text%3E%3C/svg%3E">
 <style>
 :root{--g:#087f5b;--p:#f5faf7;--line:#d8e7df;--ink:#19342a;--muted:#60756b}*{box-sizing:border-box}body{margin:0;background:var(--p);color:var(--ink);font:16px system-ui,Arial}header{background:linear-gradient(120deg,#075e45,#0b8f67);color:white;padding:25px 18px 36px}.wrap,main{max-width:940px;margin:auto;padding:0 16px}h1{margin:0;font-size:clamp(27px,4vw,38px)}header p{max-width:650px;line-height:1.5;color:#e2fff4}.logo{font-size:24px;display:inline-grid;place-items:center;background:#ffffff25;border-radius:12px;width:43px;height:43px;margin-right:10px}main{margin-top:-15px;margin-bottom:36px}.panel{background:white;border:1px solid var(--line);border-radius:17px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #153a2410}h2{font-size:20px;margin:0 0 10px}.sub,.hint,.status,footer{color:var(--muted);font-size:13px;line-height:1.5}.sub{margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{position:relative;min-width:0}label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}input,select{width:100%;padding:12px;border:1px solid #c9d9d0;border-radius:10px;font:inherit;color:var(--ink);background:white}input:focus,select:focus{outline:2px solid #087f5b40;border-color:var(--g)}.hint{margin-top:5px}.suggestions{display:none;position:absolute;top:100%;left:0;right:0;z-index:4;max-height:220px;overflow:auto;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px #1234}.suggestion{display:block;width:100%;padding:10px;text-align:left;border:0;border-bottom:1px solid #edf3ef;background:white;cursor:pointer}.suggestion:hover{background:#e6fcf5}.suggestion strong,.suggestion small{display:block}.suggestion small{color:var(--muted);margin-top:3px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--g);color:white}.secondary{background:#edf5f0;color:#215541;border:1px solid var(--line)}.result{display:none;background:#f0fff8;border:1px solid #b9e9d7;border-radius:13px;padding:15px;margin-top:15px}.route{font-size:18px;font-weight:750}.muted{color:var(--muted);font-size:13px;margin-top:5px}.faregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.fare{background:white;border:1px solid var(--line);padding:12px;border-radius:10px}.fare b,.fare span{display:block}.fare span{color:var(--muted);font-size:13px;margin-top:4px}.notice{background:#fff7e6;border:1px solid #f2d9a4;color:#704b0a;border-radius:10px;padding:12px;font-size:13px;line-height:1.5;margin-top:12px}.list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;background:white}.chip button{border:0;background:none;color:#9b4030;cursor:pointer}.status{margin-top:10px}.inline{display:flex;gap:8px}.inline input{flex:1}footer{text-align:center;padding:0 16px 28px}@media(max-width:620px){.grid,.faregrid{grid-template-columns:1fr}.panel{padding:15px}}
 
@@ -17,7 +18,7 @@
 .main-location-status{font-size:12px;color:var(--muted,#64756c)}
 
 </style>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
 .map-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .map-btn{border:1px solid #b8d8c8;background:#effaf4;color:#145b40;border-radius:9px;padding:8px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;margin-top:7px}
@@ -30,29 +31,78 @@
 @media(max-width:620px){.map-card{padding:12px}.map-search{flex-direction:column}#map{min-height:280px}}
 
 .brand-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.brand-actions .secondary{background:#ffffffea;color:#15523d}.connection-status{font-size:12px;color:#dff7eb}.account-modal{display:none;position:fixed;inset:0;z-index:1500;background:#10291dcc;padding:16px;align-items:center;justify-content:center}.account-modal.open{display:flex}.account-card{position:relative;width:min(480px,100%);background:white;border-radius:18px;padding:24px;box-shadow:0 20px 70px #0005}.account-card h2{padding-right:30px}.close-modal{position:absolute;right:14px;top:12px;border:0;background:#edf5f0;border-radius:9px;font-size:24px;width:36px;height:36px;cursor:pointer;color:var(--ink)}.community-head{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}.community-head .sub{max-width:620px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 22px}.stat-card{background:#f3faf6;border:1px solid var(--line);border-radius:12px;padding:13px}.stat-card span,.stat-card strong{display:block}.stat-card span{font-size:12px;color:var(--muted)}.stat-card strong{font-size:20px;margin-top:4px}.leaderboard{display:grid;gap:8px}.leader-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}.leader-left{display:flex;gap:10px;align-items:center}.rank-bubble{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#eaf7f0;font-weight:800}.leader-name{font-weight:750}.leader-meta{font-size:12px;color:var(--muted)}.reward-panel{margin-top:18px;padding:14px;background:#f6fbf8;border:1px solid var(--line);border-radius:12px}.reward-actions{display:flex;gap:8px;flex-wrap:wrap}.moderation-item{align-items:flex-start}.moderation-actions{display:flex;gap:6px;flex-wrap:wrap}.moderation-actions .btn{font-size:12px;padding:7px 9px}.reward-actions .btn{padding:9px 11px;font-size:13px}@media(max-width:620px){.stats-grid{grid-template-columns:1fr}.community-head{display:block}.community-head .btn{margin-bottom:10px}.account-card{padding:18px}}
+
+/* VaraNama v10 navigation and accessibility polish */
+.site-nav{position:sticky;top:0;z-index:500;background:#ffffffed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:8px 12px}
+.site-nav-inner{max-width:940px;margin:auto;display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;align-items:center}
+.site-nav a{white-space:nowrap;text-decoration:none;color:#245441;font-size:13px;font-weight:750;padding:9px 11px;border-radius:9px}
+.site-nav a:hover,.site-nav a:focus{background:#eaf7f0;outline:2px solid #087f5b30}
+section[id]{scroll-margin-top:78px}
+.auth-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.auth-mode{border:1px solid var(--line);background:#f6faf7;color:var(--ink);border-radius:10px;padding:10px;font:inherit;font-weight:750;cursor:pointer}
+.auth-mode.active{background:#087f5b;color:white;border-color:#087f5b}
+button:focus-visible,a:focus-visible{outline:3px solid #087f5b66;outline-offset:2px}
+[hidden]{display:none!important}
+@media(max-width:620px){.site-nav{padding:7px}.site-nav a{padding:9px;font-size:12px}.brand-actions{align-items:flex-start}.connection-status{width:100%}}
+
+/* v11: true page-style navigation; one focused workspace is visible at a time */
+.page-view{display:none!important;min-height:280px}
+.page-view.active{display:block!important}
+.site-nav{padding:10px 16px;box-shadow:0 3px 14px #12341a08}
+.site-nav-inner{max-width:1120px;justify-content:center;gap:5px;overflow:visible;flex-wrap:wrap}
+.site-nav a{padding:10px 14px;font-size:14px;border-radius:999px;transition:background .15s,color .15s}
+.site-nav a[aria-current="page"]{background:#087f5b;color:#fff}
+main#home{max-width:1120px;margin:24px auto 48px;padding:0 18px;min-height:54vh}
+.panel{padding:clamp(20px,3vw,32px);border-radius:20px;box-shadow:0 8px 28px #153a2409}
+#homePanel{overflow:hidden}
+.welcome-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:28px;align-items:center;padding:12px 0 28px}
+.welcome-copy h2{font-size:clamp(28px,4vw,42px);line-height:1.12;letter-spacing:-.035em;max-width:620px;margin:10px 0 14px}
+.welcome-copy .sub{font-size:16px;line-height:1.75;max-width:650px}
+.eyebrow{font-size:11px;font-weight:850;letter-spacing:.13em;color:#087f5b}
+.welcome-art{min-height:230px;border-radius:18px;background:radial-gradient(circle at 50% 45%,#d4f5e3,#eefaf3 55%,#f8fcf9);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.route-dot{width:54px;height:54px;display:grid;place-items:center;border-radius:18px;background:#fff;box-shadow:0 7px 20px #0b62401c;font-size:24px;z-index:1}
+.route-dot.end{background:#087f5b;color:#fff;font-weight:900;font-size:24px}
+.route-line{width:90px;height:4px;border-radius:99px;background:repeating-linear-gradient(90deg,#49a77e 0 10px,transparent 10px 17px);margin:0 12px;transform:rotate(-12deg)}
+.welcome-art-caption{position:absolute;bottom:18px;font-size:12px;color:#527566;font-weight:750}
+.home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:4px}
+.home-action{display:flex;align-items:center;gap:12px;min-width:0;text-align:left;padding:16px 14px;background:#fbfdfb;border:1px solid var(--line);border-radius:14px;color:var(--ink);cursor:pointer;font:inherit;transition:transform .15s,border-color .15s,background .15s}
+.home-action:hover{transform:translateY(-2px);border-color:#8bc5a9;background:#f5fcf8}
+.home-action-icon{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:12px;background:#e6f6ed;color:#087f5b;font-size:24px;font-weight:800}
+.home-action strong,.home-action small{display:block}.home-action strong{font-size:14px}.home-action small{font-size:12px;color:var(--muted);line-height:1.4;margin-top:4px}.home-arrow{margin-left:auto;color:#087f5b;font-size:19px}
+.home-footnote{margin:22px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+#fareSearch .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#placeSubmit .grid,#fareSubmit .grid{gap:18px}
+#leaderboardPanel .leaderboard{max-width:760px;margin-top:22px}
+@media(max-width:720px){.welcome-layout{grid-template-columns:1fr;gap:18px}.welcome-art{min-height:150px}.home-actions{grid-template-columns:1fr}.site-nav-inner{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}.site-nav a{font-size:13px;padding:9px 12px}main#home{padding:0 12px;margin-top:16px}.panel{padding:18px}#fareSearch .grid{grid-template-columns:1fr}}
+.find-place-names{margin-top:7px}.find-place-names:disabled{opacity:.65;cursor:wait}.place-search-status{font-size:12px;color:var(--muted);margin:6px 0 0;line-height:1.4}
 </style></head><body>
 <header><div class="wrap"><div><span class="logo">৳</span><span style="font-size:13px">COMMUNITY FARE GUIDE · ভাড়ানামা</span></div><h1>VaraNama <span style="font-size:.72em">ভাড়ানামা</span></h1><p>Know the route. Know the usual fare. A community-powered fare guide, starting with Dhaka Division — free to browse, built by local contributors.</p><div class="brand-actions"><button class="btn secondary" id="accountBtn" type="button">Sign in / Create account</button><span id="connectionStatus" class="connection-status">Preview mode · shared database not connected</span></div></div></header>
-<main>
-<section class="panel"><h2>Find a route / রুট খুঁজুন</h2><p class="sub">Type in English or Bangla. Pick a suggestion to use a known place name.</p>
-<div class="grid"><div class="field"><label for="from">From / যেখান থেকে</label><div class="place-input-wrap"><input id="from" placeholder="Farmgate / ফার্মগেট" autocomplete="off"><div class="place-suggestions" id="fromSuggestions"></div></div><div class="suggestions" id="sfrom"></div><div class="hint">Select a suggestion or enter a custom name.</div></div>
-<div class="field"><label for="to">To / যেখানে যাবেন</label><div class="place-input-wrap"><input id="to" placeholder="Gulistan / গুলিস্তান" autocomplete="off"><div class="place-suggestions" id="toSuggestions"></div></div>
+<nav class="site-nav" aria-label="Main navigation"><div class="site-nav-inner">
+<a href="#homePanel" data-page-link="homePanel">Home</a><a href="#fareSearch" data-page-link="fareSearch">Find fares</a><a href="#placeSubmit" data-page-link="placeSubmit">Add a place</a><a href="#fareSubmit" data-page-link="fareSubmit">Report a fare</a><a href="#communityPanel" data-page-link="communityPanel">My profile</a><a href="#leaderboardPanel" data-page-link="leaderboardPanel">Leaderboard</a><a href="#helpPanel" data-page-link="helpPanel">Help</a>
+</div></nav>
+<main id="home">
+<section class="panel page-view active" id="homePanel" data-page-view="homePanel"><div class="welcome-layout"><div class="welcome-copy"><span class="eyebrow">COMMUNITY-POWERED · BANGLADESH</span><h2>Know the route. Know the usual fare.</h2><p class="sub">Find community-reported transport fares around Dhaka Division. Browse freely, then help improve the guide by sharing places and fares you know.</p><div class="actions"><button class="btn primary" type="button" data-go-page="fareSearch">Find a fare</button><button class="btn secondary" type="button" data-go-page="fareSubmit">Report a fare</button></div></div><div class="welcome-art" aria-hidden="true"><div class="route-dot">📍</div><div class="route-line"></div><div class="route-dot end">৳</div><div class="welcome-art-caption">Local knowledge. Fairer journeys.</div></div></div><div class="home-actions"><button class="home-action" type="button" data-go-page="fareSearch"><span class="home-action-icon">⌕</span><span><strong>Find fares</strong><small>Compare recent community reports</small></span><span class="home-arrow">→</span></button><button class="home-action" type="button" data-go-page="placeSubmit"><span class="home-action-icon">＋</span><span><strong>Add a place</strong><small>Suggest a missing stop or landmark</small></span><span class="home-arrow">→</span></button><button class="home-action" type="button" data-go-page="communityPanel"><span class="home-action-icon">♙</span><span><strong>Your profile</strong><small>Track your XP and contributions</small></span><span class="home-arrow">→</span></button></div><p class="home-footnote">Fares are community-reported guidance, not official rates. Availability and prices may vary.</p></section>
+<section class="panel page-view" id="fareSearch" data-page-view="fareSearch"><h2>Find a route / রুট খুঁজুন</h2><p class="sub">Type a place name and press Enter or “Find place names”. Suggestions come from saved places first, with an OpenStreetMap name search when requested.</p>
+<div class="grid"><div class="field"><label for="from">From / যেখান থেকে</label><div class="place-input-wrap"><input id="from" placeholder="Farmgate / ফার্মগেট" autocomplete="off"><div class="place-suggestions" id="fromSuggestions"></div></div><button class="main-location-btn find-place-names" type="button" data-search-target="from">⌕ Find place names</button><div class="suggestions" id="sfrom"></div><div class="hint">Select a suggestion or enter a custom name.</div></div>
+<div class="field"><label for="to">To / যেখানে যাবেন</label><div class="place-input-wrap"><input id="to" placeholder="Gulistan / গুলিস্তান" autocomplete="off"><div class="place-suggestions" id="toSuggestions"></div></div><button class="main-location-btn find-place-names" type="button" data-search-target="to">⌕ Find place names</button>
 <div class="main-location-row"><button class="main-location-btn" type="button" id="useCurrentMain">◎ Use my current location</button><span class="main-location-status" id="currentMainStatus">Use your location to suggest nearby places.</span></div><div class="suggestions" id="sto"></div></div>
 <div><label for="vehicle">Transport / যানবাহন</label><select id="vehicle"><option>CNG auto-rickshaw</option><option>Easy bike / ইজিবাইক</option><option>Battery rickshaw / ব্যাটারিচালিত রিকশা</option><option>Pedal rickshaw / প্যাডেল রিকশা</option><option>Local bus / লোকাল বাস</option><option>Leguna / লেগুনা</option></select></div>
 <div><label for="ride">Ride type / যাত্রার ধরন</label><select id="ride"><option value="reserved">Reserved / পুরো গাড়ি</option><option value="shared">Shared / শেয়ার</option></select></div></div>
 <div class="actions"><button class="btn primary" id="check">Check fare reports</button><button class="btn secondary" id="swap">Swap route ⇅</button></div>
 <div class="result" id="result"><h3>Selected route</h3><div class="route" id="route"></div><div class="muted" id="meta"></div><div class="faregrid"><div class="fare"><b>Typical fare</b><span id="typical">No reports yet</span></div><div class="fare"><b>Recent range</b><span id="range">No reports yet</span></div><div class="fare"><b>Reports</b><span id="count">0</span></div></div><div class="notice" id="note">No fare reports yet for this exact route. Reports are not official rates.</div></div></section>
-<section class="panel"><h2>Add a missing place / নতুন জায়গা যোগ করুন</h2><p class="sub">Suggest a locality, market, stop, or landmark. Contributions are reviewed to prevent duplicates; approved new places earn 5 XP.</p>
-<div class="grid"><div><label for="newname">Common name</label><input id="newname" placeholder="e.g. Iskaton"><button class="map-btn" type="button" data-map-target="newplace">🗺️ Find exact place name</button></div><div><label for="newbn">Bangla name (optional)</label><input id="newbn" placeholder="ইস্কাটন"></div><div><label for="area">Area / nearby landmark</label><input id="area" placeholder="Ramna, Dhaka"></div><div><label for="alias">Other spelling (optional)</label><input id="alias" placeholder="Eskaton"></div></div>
+<section class="panel page-view" id="placeSubmit" data-page-view="placeSubmit"><h2>Add a missing place / নতুন জায়গা যোগ করুন</h2><p class="sub">Suggest a locality, market, stop, or landmark. Contributions are reviewed to prevent duplicates; approved new places earn 5 XP.</p>
+<div class="grid"><div><label for="newname">Common name</label><div class="place-input-wrap"><input id="newname" placeholder="e.g. Iskaton" autocomplete="off"><div class="place-suggestions" id="newnameSuggestions"></div></div><button class="main-location-btn find-place-names" type="button" data-search-target="newname">⌕ Find place names</button><p class="hint">Type the name, then search. No map is shown.</p></div><div><label for="newbn">Bangla name (optional)</label><input id="newbn" placeholder="ইস্কাটন"></div><div><label for="area">Area / nearby landmark</label><input id="area" placeholder="Ramna, Dhaka"></div><div><label for="alias">Other spelling (optional)</label><input id="alias" placeholder="Eskaton"></div></div>
 <div class="actions"><button class="btn primary" id="add">Add place</button></div><div class="status" id="placestatus"></div><div class="list" id="customlist"></div></section>
-<section class="panel"><h2>Report a fare / ভাড়া জানান</h2><p class="sub">Enter what you actually paid or were quoted. Don't submit guesses.</p>
-<div class="grid"><div><label for="rf">From</label><div class="place-input-wrap"><input id="rf" placeholder="Start place" autocomplete="off"><div class="place-suggestions" id="rfSuggestions"></div></div><div class="suggestions" id="srf"></div></div><div><label for="rt">To</label><div class="place-input-wrap"><input id="rt" placeholder="Destination" autocomplete="off"><div class="place-suggestions" id="rtSuggestions"></div></div>
+<section class="panel page-view" id="fareSubmit" data-page-view="fareSubmit"><h2>Report a fare / ভাড়া জানান</h2><p class="sub">Enter what you actually paid or were quoted. Don't submit guesses.</p>
+<div class="grid"><div><label for="rf">From</label><div class="place-input-wrap"><input id="rf" placeholder="Start place" autocomplete="off"><div class="place-suggestions" id="rfSuggestions"></div></div><button class="main-location-btn find-place-names" type="button" data-search-target="rf">⌕ Find place names</button><div class="suggestions" id="srf"></div></div><div><label for="rt">To</label><div class="place-input-wrap"><input id="rt" placeholder="Destination" autocomplete="off"><div class="place-suggestions" id="rtSuggestions"></div></div><button class="main-location-btn find-place-names" type="button" data-search-target="rt">⌕ Find place names</button>
 <div class="main-location-row"><button class="main-location-btn" type="button" id="useCurrentReport">◎ Use my current location</button><span class="main-location-status" id="currentReportStatus">Suggest nearby places from your location.</span></div><div class="suggestions" id="srt"></div></div><div><label for="rv">Transport</label><select id="rv"><option>CNG auto-rickshaw</option><option>Easy bike / ইজিবাইক</option><option>Battery rickshaw / ব্যাটারিচালিত রিকশা</option><option>Pedal rickshaw / প্যাডেল রিকশা</option><option>Local bus / লোকাল বাস</option><option>Leguna / লেগুনা</option></select></div><div><label for="rr">Ride type</label><select id="rr"><option value="reserved">Reserved / পুরো গাড়ি</option><option value="shared">Shared / শেয়ার</option></select></div><div><label for="fare">Fare paid (৳)</label><input id="fare" type="number" min="1" placeholder="e.g. 120"></div><div><label for="date">Date</label><input id="date" type="date"></div></div>
 <div class="actions"><button class="btn primary" id="report">Save fare report</button></div><div class="status" id="reportstatus"></div><div class="notice">Fare reports are community submissions, not official rates. Sign in with a verified email to contribute; approved reports will be shared with the community.</div></section>
-<section class="panel" id="communityPanel"><div class="community-head"><div><h2>Contributor hub · XP & rankings</h2><p class="sub">Browse without an account. Sign in to contribute, earn XP, unlock achievements, and redeem limited Pro access.</p></div><button class="btn secondary" id="openRewards" type="button">XP & Pro rewards</button></div><div class="stats-grid"><div class="stat-card"><span>Your XP</span><strong id="myXp">—</strong></div><div class="stat-card"><span>Your level</span><strong id="myLevel">Visitor</strong></div><div class="stat-card"><span>Pro status</span><strong id="myPro">Not active</strong></div></div><h3>Leaderboard · worldwide</h3><div id="leaderboard" class="leaderboard"><p class="status">Connect the shared database to load community rankings.</p></div><div id="adminPanel" class="reward-panel" hidden><h3>Moderator queue</h3><p class="hint">Review pending community submissions. Approving a genuinely new place grants 5 XP; approving a useful fare report grants 3 XP.</p><div id="moderationQueue" class="leaderboard"><p class="status">No pending submissions loaded.</p></div><p id="moderationStatus" class="status"></p></div><div id="rewardPanel" class="reward-panel" hidden><h3>Redeem XP for Pro</h3><p class="hint">Pro adds convenience features; core fare browsing stays free.</p><div class="reward-actions"><button class="btn secondary redeem" data-days="1" data-cost="100">1 day · 100 XP</button><button class="btn secondary redeem" data-days="7" data-cost="500">7 days · 500 XP</button><button class="btn secondary redeem" data-days="30" data-cost="1500">30 days · 1,500 XP</button></div><p id="rewardStatus" class="status"></p></div></section>
-<section class="panel"><h2>Starter place list</h2><p class="sub">Small test list, not a complete map of Dhaka.</p><div class="list" id="seedlist"></div></section>
+<section class="panel page-view" id="communityPanel" data-page-view="communityPanel"><div class="community-head"><div><h2>Contributor hub · XP & rankings</h2><p class="sub">Browse without an account. Sign in to contribute, earn XP, unlock achievements, and redeem limited Pro access.</p></div><button class="btn secondary" id="openRewards" type="button">XP & Pro rewards</button></div><div class="stats-grid"><div class="stat-card"><span>Your XP</span><strong id="myXp">—</strong></div><div class="stat-card"><span>Your level</span><strong id="myLevel">Visitor</strong></div><div class="stat-card"><span>Pro status</span><strong id="myPro">Not active</strong></div></div><div id="adminPanel" class="reward-panel" hidden><h3>Moderator queue</h3><p class="hint">Review pending community submissions. Approving a genuinely new place grants 5 XP; approving a useful fare report grants 3 XP.</p><div id="moderationQueue" class="leaderboard"><p class="status">No pending submissions loaded.</p></div><p id="moderationStatus" class="status"></p></div><div id="rewardPanel" class="reward-panel" hidden><h3>Redeem XP for Pro</h3><p class="hint">Pro adds convenience features; core fare browsing stays free.</p><div class="reward-actions"><button class="btn secondary redeem" data-days="1" data-cost="100">1 day · 100 XP</button><button class="btn secondary redeem" data-days="7" data-cost="500">7 days · 500 XP</button><button class="btn secondary redeem" data-days="30" data-cost="1500">30 days · 1,500 XP</button></div><p id="rewardStatus" class="status"></p></div></section>
+<section class="panel page-view" id="leaderboardPanel" data-page-view="leaderboardPanel"><div class="community-head"><div><h2>Community leaderboard</h2><p class="sub">See the contributors helping make VaraNama more useful. Only public usernames and XP are shown.</p></div><button class="btn secondary" type="button" data-go-page="communityPanel">View my profile</button></div><div id="leaderboard" class="leaderboard"><p class="status">Connect the shared database to load community rankings.</p></div></section>
+<section class="panel page-view" id="helpPanel" data-page-view="helpPanel"><h2>Help & starter places / সহায়তা</h2><p class="sub">Choose a suggestion when selecting a route. Fares are community-reported estimates, not official rates. Sign in with a verified email to contribute. Never share your password or private email publicly.</p><h3>Starter place list</h3><p class="sub">Small test list, not a complete map of Dhaka.</p><div class="list" id="seedlist"></div></section>
 </main>
-<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><button class="close-modal" id="accountClose" type="button" aria-label="Close">×</button><h2 id="accountTitle">Join the VaraNama community</h2><p class="sub">Browsing is always free. Verify your email to add places or report fares and earn XP.</p><div id="signedOutForm"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"><label for="authUsername" style="margin-top:12px">Public username</label><input id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Choose a display name"><div class="actions"><button class="btn primary" id="sendMagicLink" type="button">Email me a sign-in link</button></div><p class="hint">Your email stays private. Only your chosen username appears on the leaderboard.</p></div><div id="signedInPanel" hidden><p id="accountEmail" class="status"></p><div class="actions"><button class="btn secondary" id="signOutBtn" type="button">Sign out</button></div></div><p id="authStatus" class="status" aria-live="polite"></p></div></div>
-<div class="map-modal" id="mapModal" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><button class="close-modal" id="accountClose" type="button" aria-label="Close">×</button><h2 id="accountTitle">Join the VaraNama community</h2><p class="sub">Browsing is always free. Verify your email to add places or report fares and earn XP.</p><div id="signedOutForm"><div class="auth-modes" role="group" aria-label="Account action"><button class="auth-mode active" id="modeCreate" type="button" aria-pressed="true">Create account</button><button class="auth-mode" id="modeLogin" type="button" aria-pressed="false">Log in</button></div><p class="hint" id="authModeHelp">Create your account with an email address and public username. We’ll email you a secure sign-in link.</p><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"><label for="authUsername" id="usernameLabel" style="margin-top:12px">Public username</label><input id="authUsername" maxlength="24" autocomplete="nickname" placeholder="Choose a display name"><div class="actions"><button class="btn primary" id="sendMagicLink" type="button">Create account & email link</button></div><p class="hint">Your email stays private. Only your chosen username appears on the leaderboard.</p></div><div id="signedInPanel" hidden><p id="accountEmail" class="status"></p><div class="actions"><button class="btn secondary" id="signOutBtn" type="button">Sign out</button></div></div><p id="authStatus" class="status" aria-live="polite"></p></div></div>
+<div class="map-modal" id="mapModal" hidden role="dialog" aria-modal="true" aria-labelledby="mapTitle">
  <div class="map-card">
   <h2 id="mapTitle">Find the place's recognized name</h2>
   <p class="sub">Use the map to identify the recognized place name. Search for a landmark, or use your current location; check the name and nearby area before using it.</p>
@@ -66,7 +116,8 @@
  </div>
 </div>
 <footer>VaraNama · Community-powered fare guide · Free to browse worldwide.</footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+
+<script>
 // V8: autocomplete on the main page. Map lookup enriches suggestions only after a user types;
 // users no longer need to open a separate map picker for normal place selection.
 const suggestionTargets = ["from","to","rf","rt"];
@@ -160,26 +211,59 @@ function renderPlaceSuggestions(target, query, remoteItems=[]){
   }
   box.classList.add("open");
 }
+let lastExternalSearchAt=0;
 async function fetchMapSuggestions(query){
-  if(query.trim().length<3)return [];
-  const key=normalPlaceText(query);
+  const clean=String(query||"").trim();
+  if(clean.length<2)return [];
+  const key=normalPlaceText(clean);
   if(remoteSuggestionCache.has(key))return remoteSuggestionCache.get(key);
-  const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=4&countrycodes=bd&q="+encodeURIComponent(query+" Dhaka");
+  // This is an explicit user-initiated search, not per-keystroke autocomplete.
+  const wait=Math.max(0,1100-(Date.now()-lastExternalSearchAt));
+  if(wait) await new Promise(resolve=>setTimeout(resolve,wait));
+  lastExternalSearchAt=Date.now();
+  const url="https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&countrycodes=bd&q="+encodeURIComponent(clean+" Bangladesh");
   try{
     const res=await fetch(url,{headers:{Accept:"application/json"}});
     if(!res.ok)throw new Error("Search service unavailable");
     const data=await res.json();remoteSuggestionCache.set(key,data);return data;
-  }catch(e){return []}
+  }catch(e){throw new Error("Could not reach OpenStreetMap name search. Check your connection and try again.")}
 }
+async function searchPlaceNames(target){
+  const input=document.getElementById(target);
+  const box=document.getElementById(target+"Suggestions");
+  if(!input||!box)return;
+  const query=input.value.trim();
+  if(query.length<2){
+    box.innerHTML='<div class="place-suggestion"><span class="place-suggestion-icon">⌕</span><span><div class="place-suggestion-main">Type at least 2 characters</div></span></div>';box.classList.add("open");return;
+  }
+  const btn=document.querySelector('[data-search-target="'+target+'"]');
+  if(btn){btn.disabled=true;btn.textContent="Searching…";}
+  let status=document.getElementById(target+"SearchStatus");
+  if(!status){status=document.createElement("p");status.id=target+"SearchStatus";status.className="place-search-status";box.insertAdjacentElement("afterend",status);}
+  status.textContent="Searching place names…";
+  try{
+    const results=await fetchMapSuggestions(query);
+    renderPlaceSuggestions(target,query,results);
+    status.textContent=results.length?"Choose the matching name below. Results are from OpenStreetMap; check the area carefully.":"No mapped name found. Try adding a nearby area or a different spelling.";
+  }catch(err){status.textContent=err.message||"Place search failed. Please try again.";}
+  finally{if(btn){btn.disabled=false;btn.textContent="⌕ Find place names";}}
+}
+document.querySelectorAll("[data-search-target]").forEach(btn=>btn.addEventListener("click",()=>searchPlaceNames(btn.dataset.searchTarget)));
 function scheduleSmartSuggest(target, value){
   // Typing searches the shared/local place registry only. Do not call public Nominatim as keystroke autocomplete.
   renderPlaceSuggestions(target,value,[]);
+}
+const newPlaceNameInput=document.getElementById("newname");
+if(newPlaceNameInput){
+  newPlaceNameInput.addEventListener("input",()=>renderPlaceSuggestions("newname",newPlaceNameInput.value,[]));
+  newPlaceNameInput.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();searchPlaceNames("newname")}if(e.key==="Escape")document.getElementById("newnameSuggestions")?.classList.remove("open")});
 }
 suggestionTargets.forEach(target=>{
   const input=document.getElementById(target);if(!input)return;
   input.addEventListener("input",()=>{delete chosen[target];scheduleSmartSuggest(target,input.value)});
   input.addEventListener("focus",()=>{if(input.value.trim())scheduleSmartSuggest(target,input.value)});
   input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){e.preventDefault();searchPlaceNames(target)}
     if(e.key==="Escape"){const box=document.getElementById(target+"Suggestions");box?.classList.remove("open")}
   });
 });
@@ -549,12 +633,31 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementB
  $('add').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(requireContributor('place'))submitPlace()},{capture:true});
  $('report').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(requireContributor('fare'))submitFare()},{capture:true});
  $('accountBtn').addEventListener('click',()=>{modal();status('authStatus','')});$('accountClose').addEventListener('click',close);$('accountModal').addEventListener('click',e=>{if(e.target===$('accountModal'))close()});
+ let authMode='create';
+ function setAuthMode(mode){
+   authMode=mode;const creating=mode==='create';
+   $('modeCreate').classList.toggle('active',creating);$('modeLogin').classList.toggle('active',!creating);
+   $('modeCreate').setAttribute('aria-pressed',String(creating));$('modeLogin').setAttribute('aria-pressed',String(!creating));
+   $('authUsername').hidden=!creating;$('usernameLabel').hidden=!creating;
+   $('sendMagicLink').textContent=creating?'Create account & email link':'Email me a login link';
+   $('authModeHelp').textContent=creating?'Create your account with an email address and public username. We’ll email you a secure sign-in link.':'Enter the email address linked to your VaraNama account. We’ll email you a secure login link.';
+   status('authStatus','');
+ }
+ $('modeCreate').addEventListener('click',()=>setAuthMode('create'));
+ $('modeLogin').addEventListener('click',()=>setAuthMode('login'));
  $('sendMagicLink').addEventListener('click',async()=>{
-   if(!configured){status('authStatus','To enable accounts, create a Supabase project and follow SETUP.md.');return}
-   const email=$('authEmail').value.trim(),username=$('authUsername').value.trim();if(!email){status('authStatus','Enter your email address.');return}if(!username||username.length<3){status('authStatus','Choose a public username with at least 3 characters.');return}if(!/^[\p{L}\p{N}_ .-]{3,24}$/u.test(username)){status('authStatus','Use 3–24 letters, numbers, spaces, dots, underscores, or hyphens.');return}
-   sessionStorage.setItem('varanama_pending_username',username);
-   const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,data:{username}}});
-   status('authStatus',error?'Could not send sign-in email: '+error.message:'Check your email for the secure sign-in link, then return here.');
+   if(!configured){status('authStatus','The shared database is not connected yet. Check config.js and the Supabase setup.');return}
+   const email=$('authEmail').value.trim(),username=$('authUsername').value.trim();
+   if(!email){status('authStatus','Enter your email address.');return}
+   if(authMode==='create'){
+     if(!username||username.length<3){status('authStatus','Choose a public username with at least 3 characters.');return}
+     if(!/^[\p{L}\p{N}_ .-]{3,24}$/u.test(username)){status('authStatus','Use 3–24 letters, numbers, spaces, dots, underscores, or hyphens.');return}
+     sessionStorage.setItem('varanama_pending_username',username);
+   }else{sessionStorage.removeItem('varanama_pending_username')}
+   const options={emailRedirectTo:location.origin+location.pathname,shouldCreateUser:authMode==='create'};
+   if(authMode==='create')options.data={username};
+   const {error}=await client.auth.signInWithOtp({email,options});
+   status('authStatus',error?'Could not send email link: '+error.message:'Check your email for the secure '+(authMode==='create'?'account confirmation':'login')+' link.');
  });
  $('signOutBtn').addEventListener('click',async()=>{if(client)await client.auth.signOut();session=null;profile=null;renderProfile();close()});
  $('openRewards').addEventListener('click',()=>$('rewardPanel').hidden=!$('rewardPanel').hidden);
@@ -578,14 +681,46 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementB
      status('moderationStatus','Contribution '+btn.dataset.review+'. XP updated if approved.');await loadModerationQueue();await loadProfile();await loadLeaderboard();await loadSharedData();
    }));
  }
+ async function applySignupUsername(){
+   if(!client||!session?.user)return;
+   const pending=sessionStorage.getItem('varanama_pending_username');
+   const metadataName=session.user.user_metadata?.username;
+   const desired=(pending||metadataName||'').trim();
+   if(!desired)return;
+   const {data:existing}=await client.from('profiles').select('username').eq('id',session.user.id).maybeSingle();
+   // Only apply signup metadata when the profile still has its generated default username.
+   if(existing?.username?.startsWith('traveller_')){
+     const changed=await client.rpc('set_username',{p_username:desired});
+     if(!changed.error)sessionStorage.removeItem('varanama_pending_username');
+     else status('authStatus','Signed in, but username could not be saved: '+changed.error.message);
+   }else if(pending)sessionStorage.removeItem('varanama_pending_username');
+ }
  async function boot(){
    if(!configured){renderProfile();await loadLeaderboard();return}
    const {data:{session:s}}=await client.auth.getSession();session=s;
-   if(session?.user){const pending=sessionStorage.getItem('varanama_pending_username');if(pending){const {error}=await client.rpc('set_username',{p_username:pending});if(!error)sessionStorage.removeItem('varanama_pending_username')}}
-   client.auth.onAuthStateChange((_event,s)=>{session=s;setTimeout(async()=>{const pending=sessionStorage.getItem('varanama_pending_username');if(session?.user&&pending){const changed=await client.rpc('set_username',{p_username:pending});if(!changed.error)sessionStorage.removeItem('varanama_pending_username');else status('authStatus','Signed in, but username could not be saved: '+changed.error.message)}await loadProfile();renderProfile();await loadLeaderboard();await loadModerationQueue();if(session?.user&&(queuedAction||sessionStorage.getItem('varanama_queued_action')))await runQueued();},0)});
+   await applySignupUsername();
+   client.auth.onAuthStateChange((_event,s)=>{session=s;setTimeout(async()=>{await applySignupUsername();await loadProfile();renderProfile();await loadLeaderboard();await loadModerationQueue();if(session?.user&&(queuedAction||sessionStorage.getItem('varanama_queued_action')))await runQueued();},0)});
    await loadProfile();renderProfile();await loadSharedData();await loadLeaderboard();await loadModerationQueue();if(session?.user&&sessionStorage.getItem('varanama_queued_action'))await runQueued();
  }
  boot();
+})();
+</script>
+
+<script>
+(function(){
+  const views=[...document.querySelectorAll('[data-page-view]')];
+  const links=[...document.querySelectorAll('[data-page-link]')];
+  function showPage(id,updateHash=true){
+    if(!views.some(v=>v.dataset.pageView===id))id='homePanel';
+    views.forEach(v=>{const active=v.dataset.pageView===id;v.classList.toggle('active',active);v.setAttribute('aria-hidden',String(!active));});
+    links.forEach(a=>{const active=a.dataset.pageLink===id;if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+    if(updateHash&&location.hash!=='#'+id)history.pushState({page:id},'', '#'+id);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  links.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showPage(a.dataset.pageLink)}));
+  document.querySelectorAll('[data-go-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goPage)));
+  window.addEventListener('popstate',()=>showPage(location.hash.slice(1)||'homePanel',false));
+  const initial=location.hash.slice(1)||'homePanel';showPage(initial,false);
 })();
 </script>
 </body></html>

@@ -1,28 +1,28 @@
-# VaraNama (ভাড়ানামা) — community fare guide
+# VaraNama v11 — Page-based layout
 
-This is the deployable V9 scaffold based on the approved Local Fare BD V8 design. It adds the VaraNama name, contributor sign-in UI, email magic-link authentication, XP/profile/leaderboard panels, place/fare submission RPC calls, and XP-to-Pro redemption.
+This version changes the interface from a long, crowded single-page layout to a page-style experience. Only one main workspace is shown at a time, with shared navigation and browser back/forward support. The existing Supabase integration and element IDs are preserved.
 
-## Important status
+## Included
+- `index.html` — page-based UI and existing app logic
+- `config.js` — browser-safe Supabase project URL and publishable key
+- `supabase/schema.sql` — schema reference (do not rerun for this UI-only update)
+- `DEPLOY_CHECKLIST.md` — quick test checklist
 
-**This ZIP is not live yet and shared contributions will not work until Supabase is configured.** Browsing and the seeded prototype remain available before configuration. Public browsing requires no account; contributing requires a verified email and a public username. The main typeahead searches the shared registry; map/geocoder lookup is user-triggered rather than sent on every keystroke. The moderator panel appears for the profile marked as admin.
+## Publish to GitHub Pages
+1. Back up your current repository files.
+2. Extract this ZIP on your computer.
+3. Upload/replace `index.html`, `config.js`, `_headers`, and `START_LOCAL_VARANAMA.bat` in the repository root. Keep `supabase/schema.sql` in the `supabase` folder if you already keep it in the repo.
+4. Do **not** replace your existing `config.js` if it contains the correct URL and publishable key for your Supabase project; compare first.
+5. Commit the changes and wait for GitHub Pages to publish.
+6. Test navigation and account/contribution flows before announcing the site.
 
-## Deploy
+## Security and setup notes
+- The publishable/anon key is intended for browser use; never add a Supabase secret/service-role key or database password to frontend files.
+- No SQL migration is required just to change the page layout.
+- Supabase Authentication → URL Configuration must include your exact GitHub Pages URL.
+- Public fare data is community-reported guidance, not an official fare schedule. Free-tier and map-provider usage limits apply.
 
-1. Create a Supabase project on its free tier.
-2. In Supabase SQL Editor, run `supabase/schema.sql`.
-3. In Authentication → URL Configuration, set your deployed site URL and add the local preview URL if needed. Enable email OTP/magic-link sign-in. Configure email delivery/rate limits according to Supabase's current plan.
-4. Copy the Project URL and anon/publishable key into `config.js`. **Never use the service_role key in the browser.**
-5. Deploy this folder to Cloudflare Pages (direct upload or connect a Git repository). Set the root to this folder; no build command is required.
-6. Visit the public URL and test browse, sign-in, approved data loading, and contribution submission.
 
-## Preview locally
+## v12 place-name search
 
-Run `python -m http.server 8000` in this folder and visit `http://localhost:8000`. `config.js` remains unconfigured until you add your project details.
-
-## Data and moderation
-
-Place and fare contributions enter a pending-review queue. XP is granted only when a moderator approves a genuinely new place (5 XP) or a useful fare report (3 XP). The SQL creates a moderator helper function and uses a `profiles.is_admin` flag; the first administrator must be designated by a trusted project owner in the SQL editor. XP and Pro balances are not client-editable. Never expose service-role credentials in frontend files.
-
-## Free-tier note
-
-The design avoids paid API keys, but free tiers have quotas, inactivity policies, email limits, and terms that can change. A public global launch is not guaranteed to remain free at every scale. OpenStreetMap/Nominatim services also have their own usage policies; the autocomplete in the inherited prototype is best-effort and must not be treated as unlimited production geocoding.
+Place fields show instant matches from saved places. To search OpenStreetMap after finishing typing, press Enter or click **Find place names**. This is a user-initiated search (not per-keystroke autocomplete), includes Bangladesh results, and does not display a map. The browser tab uses a small inline VaraNama favicon.
